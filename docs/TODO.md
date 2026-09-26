@@ -30,8 +30,9 @@
 
 ## M3 — Itinerary (PRD §4.4)
 
-- [ ] `/trips/[id]` tab Itinerary: grup per hari dari rentang tanggal, urut `tanggal + jam + sort_order`
-- [ ] CRUD item (jam, judul, lokasi, catatan); semua member bisa edit
+- [x] Grup per hari dari rentang tanggal, urut `tanggal + jam + sort_order` — **2026-09-26** `src/lib/itinerary.ts` (`eachDayInRange`, `groupItineraryByDay`, `formatTripDate`, `formatDayLabel`); **16 test hijau** `src/lib/itinerary.test.ts`
+- [ ] Tab Itinerary UI di `/trips/[id]` (butuh M2)
+- [ ] CRUD item (jam, judul, lokasi, catatan); semua member bisa edit (butuh Supabase)
 - [ ] Bottom-sheet form di HP, modal tengah di desktop; validasi inline tanpa reload
 - [ ] Realtime Supabase untuk edit bareng
 - [ ] Empty state: "Belum ada rencana. Yuk bikin trip pertama kita!"
