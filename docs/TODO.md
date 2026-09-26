@@ -39,11 +39,11 @@
 
 ## M4 — Keuangan & split-bill (PRD §4.5, §8)
 
-- [ ] CRUD expense: judul, nominal >0, `paid_by` member, tanggal, kategori; split default semua member, bisa uncheck; min 1 peserta
-- [ ] Hapus hanya owner / yang bayar
-- [ ] Hitung: `share = amount / n`; `saldo = dibayar − bagian`; saran pelunasan minimal (§8 langkah 4)
-- [ ] Tab Keuangan: total bayar vs bagian, saldo/orang, saran "Budi → Andi Rp50.000", tombol "Tandai lunas" (transaksi settlement sendiri)
-- [ ] Unit test: saldo + settlement minimal + settlement tercatat (PRD §8 wajib)
+- [x] Hitung: `share = amount / n`; `saldo = dibayar − bagian`; saran pelunasan minimal (§8 langkah 4) — **2026-09-26** `src/lib/split-bill.ts` (`splitEvenly`, `computeBalances`, `suggestSettlements`, `formatRupiah`)
+- [x] Unit test: saldo + settlement minimal + settlement tercatat (PRD §8 wajib) — **21 test hijau** `src/lib/split-bill.test.ts` via `npm test`
+- [ ] CRUD expense (butuh Supabase)
+- [ ] Hapus hanya owner / yang bayar (butuh Supabase)
+- [ ] Tab Keuangan: total bayar vs bagian, saldo/orang, saran "Budi → Andi Rp50.000", tombol "Tandai lunas" (butuh M2/M3)
 - [ ] FAB "+ Pengeluaran"; baris lunas → seksi "Sudah diselesaikan" (collapsed)
 - [ ] Gate: 3 expense uji → saldo & saran benar, unit test hijau
 
