@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+/* ============================================================
+   KemanaKita — Design Tokens
+   Sumber: docs/design_system.md §10
+   Aturan: komponen WAJIB pakai token di sini, bukan nilai lepas.
+   ============================================================ */
+
+:root {
+  /* ---- Lagoon (primary, teal laut) ---- */
+  --lagoon-50: #f0fdfa;
+  --lagoon-100: #ccfbf1;
+  --lagoon-200: #99f6e4;
+  --lagoon-300: #5eead4;
+  --lagoon-400: #2dd4bf;
+  --lagoon-500: #14b8a6;
+  --lagoon-600: #0d9488;
+  --lagoon-700: #0f766e;
+  --lagoon-800: #115e59;
+  --lagoon-900: #134e4a;
+  --lagoon-950: #042f2e;
+
+  /* ---- Sunset (accent, amber) ---- */
+  --sunset-50: #fffbeb;
+  --sunset-100: #fef3c7;
+  --sunset-300: #fcd34d;
+  --sunset-500: #f59e0b;
+  --sunset-600: #d97706;
+  --sunset-700: #b45309;
+
+  /* ---- Sand (permukaan hangat) ---- */
+  --sand-50: #fdfbf7;
+  --sand-100: #faf6ef;
+  --sand-200: #f2ebe0;
+  --sand-300: #e6dccc;
+  --sand-400: #cfc2ac;
+  --sand-500: #b0a088;
+
+  /* ---- Slate (teks & garis) ---- */
+  --slate-900: #0f172a;
+  --slate-700: #334155;
+  --slate-600: #475569;
+  --slate-500: #64748b;
+  --slate-300: #cbd5e1;
+  --slate-100: #f1f5f9;
+
+  /* ---- Semantik ---- */
+  --success: #15803d;
+  --success-bg: #dcfce7;
+  --danger: #b91c1c;
+  --danger-bg: #fee2e2;
+  --warning: #b45309;
+  --warning-bg: #fef3c7;
+  --info: #0369a1;
+  --info-bg: #e0f2fe;
+
+  /* ---- Peran (tema terang, default) ---- */
+  --bg: var(--sand-50);
+  --surface: #ffffff;
+  --surface-2: var(--sand-100);
+  --fg: var(--slate-900);
+  --fg-muted: var(--slate-600);
+  --border: var(--sand-300);
+  --border-strong: var(--sand-400);
+  --accent: var(--sunset-500);
+  --action: var(--lagoon-700);
+  --action-hover: var(--lagoon-800);
+
+  /* ---- Radius ---- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* ---- Bayangan ---- */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 6px 16px rgba(13, 148, 136, 0.12);
+  --shadow-lg: 0 -8px 28px rgba(15, 23, 42, 0.16);
+
+  /* ---- Gerak ---- */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Tema gelap disiapkan untuk v1.1 (design_system §4.2).
+   Cukup tukar nilai peran; kelas komponen tidak berubah. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #08110f;
+    --surface: #12201d;
+    --surface-2: #1a2c28;
+    --fg: #ecfdf5;
+    --fg-muted: #9db5ae;
+    --border: #25403a;
+    --border-strong: #2f4d45;
+    --action: var(--lagoon-400);
+    --action-hover: var(--lagoon-300);
+  }
+}
+
+@theme inline {
+  /* Palet → utilitas Tailwind (bg-lagoon-700, text-sunset-500, dst.) */
+  --color-lagoon-50: var(--lagoon-50);
+  --color-lagoon-100: var(--lagoon-100);
+  --color-lagoon-200: var(--lagoon-200);
+  --color-lagoon-300: var(--lagoon-300);
+  --color-lagoon-400: var(--lagoon-400);
+  --color-lagoon-500: var(--lagoon-500);
+  --color-lagoon-600: var(--lagoon-600);
+  --color-lagoon-700: var(--lagoon-700);
+  --color-lagoon-800: var(--lagoon-800);
+  --color-lagoon-900: var(--lagoon-900);
+  --color-lagoon-950: var(--lagoon-950);
+
+  --color-sunset-50: var(--sunset-50);
+  --color-sunset-100: var(--sunset-100);
+  --color-sunset-300: var(--sunset-300);
+  --color-sunset-500: var(--sunset-500);
+  --color-sunset-600: var(--sunset-600);
+  --color-sunset-700: var(--sunset-700);
+
+  --color-sand-50: var(--sand-50);
+  --color-sand-100: var(--sand-100);
+  --color-sand-200: var(--sand-200);
+  --color-sand-300: var(--sand-300);
+  --color-sand-400: var(--sand-400);
+  --color-sand-500: var(--sand-500);
+
+  --color-slate-100: var(--slate-100);
+  --color-slate-300: var(--slate-300);
+  --color-slate-500: var(--slate-500);
+  --color-slate-600: var(--slate-600);
+  --color-slate-700: var(--slate-700);
+  --color-slate-900: var(--slate-900);
+
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  /* Peran */
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-action: var(--action);
+  --color-action-hover: var(--action-hover);
+
+  /* Tipografi (design_system §2) */
+  --font-display: var(--font-gabarito), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius & bayangan */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 6px 16px rgba(13, 148, 136, 0.12);
+  --shadow-lg: 0 -8px 28px rgba(15, 23, 42, 0.16);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  /* Fokus terlihat (design_system §11) */
+  :focus-visible {
+    outline: 2px solid var(--lagoon-600);
+    outline-offset: 2px;
+  }
+
+  /* Nominal uang wajib tabular (design_system §2.1) */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
