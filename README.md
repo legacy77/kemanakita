@@ -72,6 +72,8 @@ cp .env.example .env.local
 # 3. Jalankan migrasi database
 # buka supabase/migrations/20260926000000_init.sql
 # paste & run di Supabase SQL Editor
+# lalu buka supabase/migrations/20260927000000_owner_trigger.sql
+# paste & run juga (trigger owner saat trip dibuat)
 
 # 4. Nyalain
 npm run dev

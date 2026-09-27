@@ -5,7 +5,7 @@
 
 ## Prioritas — 2026-09-27 (PM)
 
-> State: M0 100%. Logika M3/M4 + validasi M2/M3/M4 selesai + halaman `/dashboard` (agregasi personal) selesai. **104 test hijau, HEAD `73b3c93`.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). M1 migrasi ada tapi belum pernah jalan — belum ada project Supabase / `.env.local`. Guest-mode tunda (PRD §4.6).
+> State: M0 100%. Logika M3/M4 + validasi M2/M3/M4 selesai + halaman `/dashboard` (agregasi personal) selesai. **104 test hijau, HEAD `30c9f9a`.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). M1 migrasi ada tapi belum pernah jalan — belum ada project Supabase / `.env.local`. Guest-mode tunda (PRD §4.6).
 > Aturan gate: M1 gate gagal → M2–M6 yang butuh DB parkir. Yang UNBLOCKED boleh maju paralel selama beda file.
 
 ### Arti label
