@@ -86,7 +86,7 @@ Fitur berikut **tidak** dibuat di MVP (mungkin di versi lanjutan):
 
 ### 4.1 Autentikasi & Akun
 
-- Daftar/masuk dengan email (magic link / OTP).
+- Daftar/masuk dengan email + PIN 6 digit.
 - Profil sederhana: nama tampilan.
 - Pengguna yang belum daftar bisa mencoba membuat trip sebagai guest, lalu
   diminta mendaftar saat ingin menyimpan/mengundang. *(Opsional — lihat 4.6 catatan.)*
@@ -190,7 +190,7 @@ ditunda ke iterasi berikutnya.
 |---------|-----------|
 | Framework | Next.js (App Router) + TypeScript |
 | Styling | Tailwind CSS |
-| Auth | Supabase Auth (email magic link / OTP) |
+| Auth | Supabase Auth (email + PIN 6 digit) |
 | Database | Supabase Postgres + Row Level Security (RLS) |
 | Realtime | Supabase Realtime (untuk edit bareng) |
 | Hosting | Vercel |

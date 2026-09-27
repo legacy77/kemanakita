@@ -5,7 +5,7 @@
 
 ## Prioritas — 2026-09-27 (PM)
 
-> State: M0 100%. Logika M3/M4 + validasi M2/M3/M4 selesai (76 test hijau, HEAD `6991cbf` == `origin/main`). M1 migrasi ada tapi belum pernah jalan — belum ada project Supabase / `.env.local`. Reviewer: Ready to proceed, tanpa temuan actionable. Guest-mode tunda (PRD §4.6).
+> State: M0 100%. Logika M3/M4 + validasi M2/M3/M4 selesai + halaman `/dashboard` (agregasi personal) selesai. **104 test hijau, HEAD `73b3c93`.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). M1 migrasi ada tapi belum pernah jalan — belum ada project Supabase / `.env.local`. Guest-mode tunda (PRD §4.6).
 > Aturan gate: M1 gate gagal → M2–M6 yang butuh DB parkir. Yang UNBLOCKED boleh maju paralel selama beda file.
 
 ### Arti label
@@ -62,7 +62,7 @@
 
 ## M2 — Auth + trip + undangan (PRD §4.1–4.3, §5)
 
-- [ ] `/login` magic link/OTP Supabase; `profiles.name`
+- [ ] `/login` email + PIN 6 digit; `profiles.name`
 - [ ] `/trips`: buat trip (judul, destinasi, start/end), list trip user; pembuat = owner
 - [ ] Invite link `/join?code=`: buka → login → auto-join member
 - [ ] Owner hapus trip / kick; non-member buka trip → redirect + "Kamu belum jadi anggota trip ini"
@@ -85,7 +85,7 @@
 
 - [x] Hitung: `share = amount / n`; `saldo = dibayar − bagian`; saran pelunasan minimal (§8 langkah 4) — **2026-09-26** `src/lib/split-bill.ts` (`splitEvenly`, `computeBalances`, `suggestSettlements`, `formatRupiah`)
 - [x] Unit test: saldo + settlement minimal + settlement tercatat (PRD §8 wajib) — **21 test hijau** `src/lib/split-bill.test.ts` via `npm test`
-- [x] Validasi input expense (nominal > 0, `paid_by` member, min 1 peserta split, kategori valid) + parse/format nominal rupiah (design_system §8.2) + metadata 6 kategori + ikon (design_system §7) — **2026-09-27** `src/lib/validate.ts` (`validateExpenseInput`, `parseRupiahInput`, `formatRupiahInput`, `isValidDate`, `EXPENSE_CATEGORIES`, `getExpenseCategory`); **23 test hijau** (expense 10 + kategori 3 + parse/format 8 + tanggal 2) di `src/lib/validate.test.ts` (39 test file ini; total 76 test lolos `npm test`)
+- [x] Validasi input expense (nominal > 0, `paid_by` member, min 1 peserta split, kategori valid) + parse/format nominal rupiah (design_system §8.2) + metadata 6 kategori + ikon (design_system §7) — **2026-09-27** `src/lib/validate.ts` (`validateExpenseInput`, `parseRupiahInput`, `formatRupiahInput`, `isValidDate`, `EXPENSE_CATEGORIES`, `getExpenseCategory`); **23 test hijau** (expense 10 + kategori 3 + parse/format 8 + tanggal 2) di `src/lib/validate.test.ts` (39 test file ini; total 104 test lolos `npm test`)
 - [ ] CRUD expense (butuh Supabase)
 - [ ] Hapus hanya owner / yang bayar (butuh Supabase)
 - [ ] Tab Keuangan: total bayar vs bagian, saldo/orang, saran "Budi → Andi Rp50.000", tombol "Tandai lunas" (butuh M2/M3)

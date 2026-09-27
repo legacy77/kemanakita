@@ -33,25 +33,43 @@ export async function createTrip(
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/trips");
 
-  const { data, error } = await supabase
-    .from("trips")
-    .insert({
-      title: checked.value.title,
-      destination: checked.value.destination === "" ? null : checked.value.destination,
-      start_date: checked.value.startDate,
-      end_date: checked.value.endDate,
-      created_by: user.id,
-    })
-    .select("id")
-    .single();
+  // BLOCKER-1: jangan `.select().single()` setelah insert. `trips` hanya bisa
+  // dibaca oleh member (RLS `trips_select_member`), dan keanggotaan owner dibuat
+  // oleh trigger `on_trip_created` (migrasi 20260927) — pembacaan balik bisa
+  // balik kosong / gagal. Jadi id di-generate di sini dan dipakai eksplisit.
+  const tripId = crypto.randomUUID();
 
-  // Trigger `on_trip_created` (migrasi 20260927) menjadikan pembuat = owner.
-  // Bila trigger belum di-run, insert trip boleh sukses tapi pembuat belum
-  // member (RLS menolak baca) — beri tahu user untuk hubungi admin.
-  if (error || !data) {
+  const { error } = await supabase.from("trips").insert({
+    id: tripId,
+    title: checked.value.title,
+    destination: checked.value.destination === "" ? null : checked.value.destination,
+    start_date: checked.value.startDate,
+    end_date: checked.value.endDate,
+    created_by: user.id,
+  });
+
+  if (error) {
     return { status: "error", message: "Gagal bikin trip. Coba lagi sebentar ya." };
   }
-  return { status: "created", tripId: data.id };
+
+  // Verifikasi baris keanggotaan owner. Trigger `on_trip_created` (migrasi
+  // 20260927) yang membuatnya. Bila belum di-run, insert trip sukses tapi tak
+  // ada baris member → beri tahu user dengan pesan actionable.
+  const { data: membership } = await supabase
+    .from("trip_members")
+    .select("trip_id")
+    .eq("trip_id", tripId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!membership) {
+    return {
+      status: "error",
+      message: "Trip kebuat tapi kamu belum tercatat sebagai anggota. Hubungi admin: migrasi 20260927 belum jalan.",
+    };
+  }
+
+  return { status: "created", tripId };
 }
 
 export async function deleteTrip(formData: FormData): Promise<void> {

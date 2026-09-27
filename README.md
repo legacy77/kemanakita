@@ -45,7 +45,7 @@ Yang penting: kalian berteman. Semua anggota bisa ngedit itinerary dan pengeluar
 |---|---|
 | Framework | Next.js (App Router) + TypeScript |
 | Styling | Tailwind CSS |
-| Auth | Supabase Auth (email magic link / OTP) |
+| Auth | Supabase Auth (email + PIN 6 digit) |
 | Database | Supabase Postgres + Row Level Security |
 | Realtime | Supabase Realtime (biar edit barengan tetap sinkron) |
 | Hosting | Vercel |
