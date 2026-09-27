@@ -53,16 +53,36 @@ function isExpenseCategoryKey(value: string): value is ExpenseCategoryKey {
  * Parse teks input nominal menjadi rupiah bulat.
  * Menerima prefix "Rp", pemisah ribuan titik/koma/spasi (design_system §8.2:
  * "format ribuan otomatis"). Mengembalikan `null` bila tidak bisa di-parse,
- * kosong, atau bernilai negatif — pemanggil yang memutuskan pesan error.
+ * kosong, bernilai negatif, atau AMBIGU.
+ *
+ * Aturan anti-salah-baca: pemisah hanya sah sebagai pemisah RIBUAN, yaitu grup
+ * setelah grup pertama wajib tepat 3 digit. Campuran "." dan "," ditolak karena
+ * tidak jelas mana desimal (di locale id-ID "," = desimal, jadi "12,50" akan
+ * salah dibaca 100x bila diterima sebagai ribuan).
  */
 export function parseRupiahInput(input: string): number | null {
   if (typeof input !== "string") return null;
+
   const cleaned = input
     .trim()
     .replace(/^rp\s*/i, "")
-    .replace(/[\s.,]/g, "");
-  if (cleaned === "" || !/^\d+$/.test(cleaned)) return null;
-  const value = Number(cleaned);
+    .replace(/\s+/g, "");
+  if (cleaned === "") return null;
+
+  const hasDot = cleaned.includes(".");
+  const hasComma = cleaned.includes(",");
+  if (hasDot && hasComma) return null; // ambigu: campur pemisah
+
+  const separator = hasDot ? "." : hasComma ? "," : null;
+  const groups = separator ? cleaned.split(separator) : [cleaned];
+  if (groups.some((group) => !/^\d+$/.test(group))) return null;
+
+  if (groups.length > 1) {
+    if (groups[0].length > 3) return null;
+    if (groups.slice(1).some((group) => group.length !== 3)) return null;
+  }
+
+  const value = Number(groups.join(""));
   return Number.isSafeInteger(value) ? value : null;
 }
 

@@ -64,6 +64,14 @@ test("parseRupiahInput mengembalikan null untuk input tidak valid", () => {
   assert.equal(parseRupiahInput("1.2.3x"), null);
 });
 
+test("parseRupiahInput menolak pola koma desimal (IDR bulat, bukan pecahan)", () => {
+  // Di locale id-ID koma bisa jadi desimal ("12,50") — ambigu dengan pemisah
+  // ribuan. Karena nominal selalu rupiah bulat, pola semacam ini ditolak.
+  for (const input of ["12,50", "1.234,56", "1.250,000", "1,250.000", "0,5"]) {
+    assert.equal(parseRupiahInput(input), null, `input: ${input}`);
+  }
+});
+
 test("parseRupiahInput menolak tanda negatif (nominal IDR selalu >= 0)", () => {
   assert.equal(parseRupiahInput("-5000"), null);
 });
