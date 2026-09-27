@@ -5,6 +5,8 @@ import {
   computeBalances,
   suggestSettlements,
   formatRupiah,
+  toSplitExpenses,
+  toSettlementTransfers,
   type Expense,
 } from "./split-bill.ts";
 
@@ -202,4 +204,126 @@ test("formatRupiah memakai pemisah ribuan titik dan awalan Rp", () => {
 test("formatRupiah membulatkan nilai pecahan ke rupiah terdekat", () => {
   assert.equal(formatRupiah(33.4), "Rp 33");
   assert.equal(formatRupiah(33.6), "Rp 34");
+});
+
+// ---------- toSplitExpenses / toSettlementTransfers ----------
+//
+// Helper ini mengekstrak pemetaan inline di src/app/trips/[id]/page.tsx:161-173
+// agar /dashboard dan /trips/[id] memakai logika identik.
+
+const row = (
+  overrides: Partial<{ id: string; amount: number; paid_by: string; kind: "expense" | "settlement" }> = {},
+) => ({
+  id: "e1",
+  amount: 100_000,
+  paid_by: "a",
+  kind: "expense" as const,
+  ...overrides,
+});
+
+const splits = (entries: Record<string, { user_id: string }[]>) =>
+  new Map(Object.entries(entries));
+
+test("toSplitExpenses: memetakan expense + participantIds dari splits", () => {
+  const result = toSplitExpenses(
+    [row({ id: "e1", paid_by: "a" })],
+    splits({ e1: [{ user_id: "a" }, { user_id: "b" }] }),
+  );
+  assert.deepEqual(result, [
+    { amount: 100_000, paidBy: "a", participantIds: ["a", "b"] },
+  ]);
+});
+
+test("toSplitExpenses: membuang expense tanpa peserta", () => {
+  const result = toSplitExpenses(
+    [row({ id: "e1" }), row({ id: "e2", amount: 50_000, paid_by: "b" })],
+    splits({ e1: [], e2: [{ user_id: "b" }] }),
+  );
+  assert.equal(result.length, 1);
+  assert.equal(result[0].paidBy, "b");
+});
+
+test("toSplitExpenses: membuang baris settlement", () => {
+  const result = toSplitExpenses(
+    [row({ id: "e1", kind: "settlement" })],
+    splits({ e1: [{ user_id: "b" }] }),
+  );
+  assert.deepEqual(result, []);
+});
+
+test("toSplitExpenses: amount desimal dibulatkan ke rupiah", () => {
+  const result = toSplitExpenses(
+    [row({ id: "e1", amount: 33.33 })],
+    splits({ e1: [{ user_id: "a" }] }),
+  );
+  assert.equal(result[0].amount, 33);
+});
+
+test("toSettlementTransfers: memetakan settlement ke {from: paid_by, to: split[0]}", () => {
+  const result = toSettlementTransfers(
+    [row({ id: "s1", kind: "settlement", paid_by: "b", amount: 50_000 })],
+    splits({ s1: [{ user_id: "a" }] }),
+  );
+  assert.deepEqual(result, [{ from: "b", to: "a", amount: 50_000 }]);
+});
+
+test("toSettlementTransfers: membuang settlement tanpa split (to kosong)", () => {
+  const result = toSettlementTransfers(
+    [row({ id: "s1", kind: "settlement", paid_by: "b" })],
+    splits({ s1: [] }),
+  );
+  assert.deepEqual(result, []);
+});
+
+test("toSettlementTransfers: membuang baris expense biasa", () => {
+  const result = toSettlementTransfers(
+    [row({ id: "e1", kind: "expense" })],
+    splits({ e1: [{ user_id: "a" }] }),
+  );
+  assert.deepEqual(result, []);
+});
+
+test("paritas: helper menghasilkan output identik dengan pemetaan inline lama", () => {
+  const rows = [
+    row({ id: "e1", amount: 300_000, paid_by: "andi" }),
+    row({ id: "e2", amount: 150_000, paid_by: "budi" }),
+    row({ id: "s1", amount: 20_000, paid_by: "budi", kind: "settlement" }),
+    row({ id: "e3", amount: 60_000, paid_by: "cici" }),
+    row({ id: "e4", amount: 10_000, paid_by: "andi" }), // tanpa peserta → dibuang
+    row({ id: "s2", amount: 5_000, paid_by: "cici", kind: "settlement" }), // tanpa split → dibuang
+  ];
+  const map = splits({
+    e1: [{ user_id: "andi" }, { user_id: "budi" }, { user_id: "cici" }],
+    e2: [{ user_id: "andi" }, { user_id: "budi" }, { user_id: "cici" }],
+    s1: [{ user_id: "andi" }],
+    e3: [{ user_id: "andi" }, { user_id: "budi" }, { user_id: "cici" }],
+    e4: [],
+    s2: [],
+  });
+
+  // Pemetaan inline lama (referensi perilaku sebelum refactor).
+  const inlineExpenses: Expense[] = rows
+    .filter((e) => e.kind !== "settlement")
+    .map((e) => ({
+      amount: Math.round(Number(e.amount)),
+      paidBy: e.paid_by,
+      participantIds: (map.get(e.id) ?? []).map((s) => s.user_id),
+    }))
+    .filter((e) => e.participantIds.length > 0);
+  const inlineSettlements = rows
+    .filter((e) => e.kind === "settlement")
+    .map((e) => {
+      const pair = map.get(e.id) ?? [];
+      return { from: e.paid_by, to: pair[0]?.user_id ?? "", amount: Math.round(Number(e.amount)) };
+    })
+    .filter((s) => s.to !== "");
+
+  assert.deepEqual(toSplitExpenses(rows, map), inlineExpenses);
+  assert.deepEqual(toSettlementTransfers(rows, map), inlineSettlements);
+
+  // Dan saldo akhirnya harus sama.
+  assert.deepEqual(
+    [...computeBalances(toSplitExpenses(rows, map), toSettlementTransfers(rows, map)).entries()].sort(),
+    [...computeBalances(inlineExpenses, inlineSettlements).entries()].sort(),
+  );
 });

@@ -13,8 +13,8 @@ import {
   computeBalances,
   suggestSettlements,
   formatRupiah,
-  type Expense as SplitExpense,
-  type Transfer,
+  toSplitExpenses,
+  toSettlementTransfers,
 } from "@/lib/split-bill";
 import { EXPENSE_CATEGORIES } from "@/lib/validate";
 import { AddItineraryForm } from "./add-itinerary-form";
@@ -158,19 +158,10 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
   const regularExpenses = expenseList.filter((e) => e.kind !== "settlement");
   const settlementRows = expenseList.filter((e) => e.kind === "settlement");
 
-  const splitExpenses: SplitExpense[] = regularExpenses.map((e) => ({
-    amount: Math.round(Number(e.amount)),
-    paidBy: e.paid_by,
-    participantIds: (splitsByExpense.get(e.id) ?? []).map((s) => s.user_id),
-  })).filter((e) => e.participantIds.length > 0);
-
-  const settlements: Transfer[] = expenseList
-    .filter((e) => e.kind === "settlement")
-    .map((e) => {
-      const pair = splitsByExpense.get(e.id) ?? [];
-      return { from: e.paid_by, to: pair[0]?.user_id ?? "", amount: Math.round(Number(e.amount)) };
-    })
-    .filter((s) => s.to !== "");
+  // Pemetaan baris DB → Expense[]/Transfer[] dipakai bersama /dashboard
+  // (src/lib/split-bill.ts) agar angka kedua halaman tidak pernah melenceng.
+  const splitExpenses = toSplitExpenses(expenseList, splitsByExpense);
+  const settlements = toSettlementTransfers(expenseList, splitsByExpense);
 
   const balances = computeBalances(splitExpenses, settlements);
   const suggestions = suggestSettlements(balances);

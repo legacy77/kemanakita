@@ -123,3 +123,60 @@ export function suggestSettlements(balances: Map<string, number>): Transfer[] {
 export function formatRupiah(amount: number): string {
   return `Rp ${new Intl.NumberFormat("id-ID").format(Math.round(amount))}`;
 }
+
+/**
+ * Baris `expenses` yang dibutuhkan mapper (subset `database.types.ts`).
+ * `amount` diparse supabase-js sebagai `number`; `Number(...)` tetap dipakai
+ * di mapper agar defensif bila runtime memberi string.
+ */
+export interface ExpenseRow {
+  id: string;
+  amount: number;
+  paid_by: string;
+  kind: "expense" | "settlement";
+}
+
+/** Splits dikelompokkan per `expense_id`; cukup `user_id` untuk saldo. */
+export type SplitsByExpense = ReadonlyMap<string, { user_id: string }[]>;
+
+/**
+ * Petakan baris `expenses` (kind != settlement) ke `Expense[]`.
+ * Semantik identik dengan pemetaan inline lama di
+ * `src/app/trips/[id]/page.tsx:161-165`: peserta kosong dibuang.
+ */
+export function toSplitExpenses(
+  rows: readonly ExpenseRow[],
+  splitsByExpense: SplitsByExpense,
+): Expense[] {
+  return rows
+    .filter((row) => row.kind !== "settlement")
+    .map((row) => ({
+      amount: Math.round(Number(row.amount)),
+      paidBy: row.paid_by,
+      participantIds: (splitsByExpense.get(row.id) ?? []).map((s) => s.user_id),
+    }))
+    .filter((expense) => expense.participantIds.length > 0);
+}
+
+/**
+ * Petakan baris `expenses` (kind == settlement) ke `Transfer[]`.
+ * Semantik identik dengan pemetaan inline lama di
+ * `src/app/trips/[id]/page.tsx:167-173`: **map dulu, baru filter** — baris
+ * tanpa split (`to` kosong) dibuang setelah dipetakan.
+ */
+export function toSettlementTransfers(
+  rows: readonly ExpenseRow[],
+  splitsByExpense: SplitsByExpense,
+): Transfer[] {
+  return rows
+    .filter((row) => row.kind === "settlement")
+    .map((row) => {
+      const pair = splitsByExpense.get(row.id) ?? [];
+      return {
+        from: row.paid_by,
+        to: pair[0]?.user_id ?? "",
+        amount: Math.round(Number(row.amount)),
+      };
+    })
+    .filter((transfer) => transfer.to !== "");
+}
