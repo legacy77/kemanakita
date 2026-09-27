@@ -11,6 +11,10 @@ import {
   validateItineraryInput,
   validateSettlementInput,
   validateInviteCode,
+  validateNameInput,
+  validatePin,
+  normalizeEmail,
+  NAME_MAX_LENGTH,
 } from "./validate.ts";
 
 // ---------- kategori pengeluaran (design_system §7) ----------
@@ -452,4 +456,40 @@ test("validateSettlementInput menolak user sama, nominal invalid, dan ID kosong"
   ]) {
     assert.equal(validateSettlementInput(input).ok, false);
   }
+});
+
+// ---------- validasi nama & PIN (login tanpa email) ----------
+
+test("validateNameInput: nama di-trim dan diterima", () => {
+  assert.deepEqual(validateNameInput("  Dhika  "), { ok: true, value: "Dhika" });
+});
+
+test("validateNameInput: nama kosong / hanya spasi ditolak", () => {
+  for (const name of ["", "   ", "\t\n"]) {
+    const result = validateNameInput(name);
+    assert.equal(result.ok, false, `nama: ${JSON.stringify(name)}`);
+  }
+});
+
+test("validateNameInput: nama > 80 karakter ditolak, 80 tepat diterima", () => {
+  const tooLong = validateNameInput("a".repeat(NAME_MAX_LENGTH + 1));
+  assert.equal(tooLong.ok, false);
+
+  const maxAllowed = validateNameInput("a".repeat(NAME_MAX_LENGTH));
+  assert.equal(maxAllowed.ok, true);
+});
+
+test("validatePin: 6 digit numerik diterima", () => {
+  assert.deepEqual(validatePin("123456"), { ok: true, value: "123456" });
+  assert.deepEqual(validatePin(" 000123 "), { ok: true, value: "000123" });
+});
+
+test("validatePin: non-numerik / panjang salah ditolak", () => {
+  for (const pin of ["", "12345", "1234567", "12345a", "abcdef", "12 34 56"]) {
+    assert.equal(validatePin(pin).ok, false, `pin: ${pin}`);
+  }
+});
+
+test("normalizeEmail: trim + lowercase", () => {
+  assert.equal(normalizeEmail("  Budi@Email.COM "), "budi@email.com");
 });

@@ -287,6 +287,41 @@ export function validateItineraryInput(
   };
 }
 
+// ---------- Akun tanpa email (login nama + email + PIN 6 digit) ----------
+
+/** Panjang maksimal nama tampil — sama dengan `maxLength` di form & kolom `profiles.name`. */
+export const NAME_MAX_LENGTH = 80;
+
+/** PIN selalu tepat 6 digit angka (tanpa leading-zero issue: 100000..999999). */
+const PIN_PATTERN = /^\d{6}$/;
+
+/** Trim + batasi 1..80 karakter. Dipakai form daftar maupun server action. */
+export function validateNameInput(name: string): ValidationResult<string> {
+  const value = (name ?? "").trim();
+  if (value === "") return { ok: false, error: "Nama wajib diisi." };
+  if (value.length > NAME_MAX_LENGTH) {
+    return { ok: false, error: `Nama kepanjangan, maksimal ${NAME_MAX_LENGTH} karakter.` };
+  }
+  return { ok: true, value };
+}
+
+/** PIN harus 6 digit numerik. Pesan sengaja generik (anti-enumeration). */
+export function validatePin(pin: string): ValidationResult<string> {
+  const value = (pin ?? "").trim();
+  if (!PIN_PATTERN.test(value)) {
+    return { ok: false, error: "PIN harus 6 angka." };
+  }
+  return { ok: true, value };
+}
+
+/** Normalisasi email: trim + lowercase. Cek format dilakukan pemanggil. */
+export function normalizeEmail(email: string): string {
+  return (email ?? "").trim().toLowerCase();
+}
+
+/** Pola email longgar yang dipakai form login/daftar (PRD §4.1). */
+export const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 // ---------- Kode undangan (PRD §4.3) ----------
 
 // `trips.invite_code` di migrasi: `encode(gen_random_bytes(6), 'hex')` → 12 hex char.
