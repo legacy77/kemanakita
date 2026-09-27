@@ -1,0 +1,115 @@
+"use server";
+
+// Server action pengeluaran — PRD §4.5, §8. RLS adalah otoritas.
+// Pembagian pakai `splitEvenly` (largest remainder) agar
+// jumlah(share) === amount, jadi saldo bisa benar-benar nol.
+// Service key TIDAK dipakai.
+
+import { revalidatePath } from "next/cache";
+import { createClient } from "@/lib/supabase/server";
+import { validateExpenseInput } from "@/lib/validate";
+import { splitEvenly } from "@/lib/split-bill";
+
+export type ExpenseFormState =
+  | { status: "idle" }
+  | { status: "error"; message: string }
+  | { status: "ok" };
+
+export async function addExpense(
+  _prev: ExpenseFormState,
+  formData: FormData,
+): Promise<ExpenseFormState> {
+  const tripId = String(formData.get("tripId") ?? "");
+  if (tripId === "") {
+    return { status: "error", message: "Trip nggak dikenali. Muat ulang halamannya ya." };
+  }
+
+  // Peserta split dikirim sebagai beberapa field bernama `participants`.
+  const participantIds = formData
+    .getAll("participants")
+    .map((value) => String(value))
+    .filter((value) => value !== "");
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { status: "error", message: "Sesi kamu udah habis. Masuk lagi ya." };
+  }
+
+  // Daftar anggota diambil dari DB (bukan dari form) — jangan percaya klien.
+  const { data: members, error: membersError } = await supabase
+    .from("trip_members")
+    .select("user_id")
+    .eq("trip_id", tripId);
+  if (membersError || !members) {
+    return { status: "error", message: "Gagal cek anggota trip. Coba lagi sebentar ya." };
+  }
+  const memberIds = members.map((m) => m.user_id);
+
+  const checked = validateExpenseInput(
+    {
+      title: String(formData.get("title") ?? ""),
+      amount: String(formData.get("amount") ?? ""),
+      paidBy: String(formData.get("paidBy") ?? ""),
+      date: String(formData.get("date") ?? ""),
+      category: String(formData.get("category") ?? "") as never,
+      participantIds,
+    },
+    memberIds,
+  );
+  if (!checked.ok) return { status: "error", message: checked.error };
+
+  const { data: expense, error: expenseError } = await supabase
+    .from("expenses")
+    .insert({
+      trip_id: tripId,
+      title: checked.value.title,
+      amount: checked.value.amount,
+      paid_by: checked.value.paidBy,
+      date: checked.value.date,
+      category: checked.value.category,
+      kind: "expense",
+    })
+    .select("id")
+    .single();
+
+  if (expenseError || !expense) {
+    return { status: "error", message: "Gagal simpan pengeluaran. Coba lagi sebentar ya." };
+  }
+
+  const shares = splitEvenly(checked.value.amount, checked.value.participantIds);
+  const { error: splitsError } = await supabase.from("expense_splits").insert(
+    [...shares.entries()].map(([userId, shareAmount]) => ({
+      expense_id: expense.id,
+      user_id: userId,
+      share_amount: shareAmount,
+    })),
+  );
+
+  if (splitsError) {
+    // Bersihkan header agar tidak ada pengeluaran tanpa rincian bagi hasil.
+    await supabase.from("expenses").delete().eq("id", expense.id);
+    return { status: "error", message: "Gagal simpan rincian bagi hasil. Coba lagi ya." };
+  }
+
+  revalidatePath(`/trips/${tripId}`);
+  return { status: "ok" };
+}
+
+export async function deleteExpense(formData: FormData): Promise<void> {
+  const tripId = String(formData.get("tripId") ?? "");
+  const expenseId = String(formData.get("expenseId") ?? "");
+  if (tripId === "" || expenseId === "") return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  // RLS `expenses_delete_owner_or_payer`: owner trip atau yang membayar.
+  await supabase.from("expenses").delete().eq("id", expenseId).eq("trip_id", tripId);
+  revalidatePath(`/trips/${tripId}`);
+}
