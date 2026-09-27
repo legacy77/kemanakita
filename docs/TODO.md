@@ -3,6 +3,47 @@
 > Spec: `docs/PRD.md` · Visual: `docs/design_system.md` · Plot agen: `docs/AGENT_PLOT.md`
 > Bahasa UI: Indonesia santai. Mata uang: IDR saja. Biaya: $0 (Supabase Free + Vercel Hobby).
 
+## Prioritas — 2026-09-27 (PM)
+
+> State: M0 100%. Logika M3/M4 + validasi M2/M3/M4 selesai (76 test hijau, HEAD `6991cbf` == `origin/main`). M1 migrasi ada tapi belum pernah jalan — belum ada project Supabase / `.env.local`. Reviewer: Ready to proceed, tanpa temuan actionable. Guest-mode tunda (PRD §4.6).
+> Aturan gate: M1 gate gagal → M2–M6 yang butuh DB parkir. Yang UNBLOCKED boleh maju paralel selama beda file.
+
+### Arti label
+
+- **BLOCKED** = butuh project Supabase + `.env.local` + migrasi jalan. Tanpa ini nggak bisa mulai.
+- **UNBLOCKED** = bisa jalan hari ini tanpa Supabase (mock / data dummy / halaman yang sudah ada).
+
+### P0 — Blocker (buka gembok dulu)
+
+| # | Item TODO | Status | Alasan |
+|---|-----------|--------|--------|
+| P0-1 | M1: project Supabase Free + env + 6 tabel + RLS + migrasi jalan | BLOCKED — aksi user | Root blocker: semua M2–M6 nunggu ini |
+| P0-2 | M1: test RLS member vs non-member + gate migrasi bersih | BLOCKED (nunggu P0-1) | Gate M1; keamanan PRD §7.4, syarat lanjut |
+| P0-3 | M2: `/login` + `/trips` + invite `/join?code=` + gate 2 akun join | BLOCKED (nunggu M1 gate) | Happy path PRD §5.1 langkah 1–4; unlock M3/M4 |
+
+### P1 — Nilai inti (setelah gembok buka)
+
+| # | Item TODO | Status | Alasan |
+|---|-----------|--------|--------|
+| P1-1 | M3: tab Itinerary + CRUD + validasi inline + empty state | BLOCKED (nunggu P0-3) | Goal PRD §1.2 #1; dependensi: halaman trip M2 |
+| P1-2 | M4: CRUD expense + aturan hapus + tab Keuangan + "Tandai lunas" + FAB | BLOCKED (nunggu P0-3) | Goal PRD §1.2 #2; core value app |
+| P1-3 | M2 error states: kode salah + non-member redirect | BLOCKED (nunggu P0-3) | PRD §5.2; kecil, kerjakan bareng P0-3 |
+| P1-4 | M3: realtime edit bareng | BLOCKED (nunggu P1-1) | Kolaborasi PRD §4.3; stabilkan CRUD dulu |
+
+### P2 — Polish & rilis (terakhir)
+
+| # | Item TODO | Status | Alasan |
+|---|-----------|--------|--------|
+| P2-1 | M5: primitives (skeleton, toast 3 dtk, modal konfirmasi) + bottom tabs + layout 640px | UNBLOCKED (mock/dummy; integrasi akhir BLOCKED) | Bisa maju tanpa DB; jangan buka tab baru sebelum M2–M4 |
+| P2-2 | M5: checklist §12 + uji HP asli via preview Vercel | BLOCKED (nunggu P1-1/P1-2 + deploy) | Gate polish; butuh app hidup + data |
+| P2-3 | M6: env Vercel + preview/prod + E2E §10.1 + backup dump + gate prod | BLOCKED (nunggu semua) | Paling akhir; E2E butuh alur penuh hidup |
+
+### 3 langkah berikutnya (paling bernilai)
+
+1. **User: bikin project Supabase Free + isi `.env.local` + run migrasi** (`supabase/migrations/20260926000000_init.sql` via SQL Editor). Tanpa ini semua implementer DB parkir. (P0-1)
+2. **Dispatch tester → developer: test RLS member vs non-member (gate M1), lalu auth + trips + invite** sampai 2 akun join via link. (P0-2 → P0-3)
+3. **Sambil nunggu user (paralel, file beda): frontend bikin primitives M5** (skeleton/toast/modal) + audit §12 ke halaman yang sudah ada. Jangan sentuh CRUD Supabase sebelum M1 gate. (P2-1, UNBLOCKED)
+
 ## M0 — Keputusan & setup
 
 - [x] Jawab PRD §12: guest-mode MVP atau tunda? → **Tunda ke v1.1** (2026-09-26)
