@@ -21,6 +21,7 @@ import { AddItineraryForm } from "./add-itinerary-form";
 import { AddExpenseForm } from "./add-expense-form";
 import { DeleteItineraryButton, DeleteExpenseButton } from "./delete-buttons";
 import { EditItineraryForm } from "./edit-itinerary-form";
+import { EditExpenseForm } from "./edit-expense-form";
 import { SettlementButton } from "./settlement-button";
 import { TabNav } from "./tab-nav";
 
@@ -361,6 +362,24 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
                         </div>
                         <div className="mt-2">
                           <DeleteExpenseButton tripId={tripId} expenseId={expense.id} />
+                        </div>
+                        <div className="mt-2">
+                          <EditExpenseForm
+                            tripId={tripId}
+                            expenseId={expense.id}
+                            memberIds={memberIds}
+                            displayNames={Object.fromEntries(
+                              memberIds.map((id) => [id, displayName(id)]),
+                            )}
+                            defaultValues={{
+                              title: expense.title,
+                              amount: Math.round(Number(expense.amount)),
+                              paidBy: expense.paid_by,
+                              date: expense.date,
+                              category: expense.category,
+                              participantIds: splits.map((s) => s.user_id),
+                            }}
+                          />
                         </div>
                       </li>
                     );
