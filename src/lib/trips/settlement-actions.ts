@@ -11,6 +11,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { validateSettlementInput } from "@/lib/validate";
+import { buildSettlementSplitRow } from "@/lib/split-bill";
 
 export type SettlementFormState =
   | { status: "idle" }
@@ -55,33 +56,32 @@ export async function markSettled(
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const { data: expense, error: expenseError } = await supabase
-    .from("expenses")
-    .insert({
-      trip_id: tripId,
-      title: "Pelunasan",
-      amount: checked.value.amount,
-      paid_by: checked.value.from,
-      date: today,
-      category: "lain-lain",
-      kind: "settlement",
-    })
-    .select("id")
-    .single();
+  // Pre-generate id: hindari `.insert().select().single()` (RETURNING bisa
+  // tampak gagal karena interaksi RLS/trigger). Id eksplisit juga dipakai
+  // rollback split bila insert split gagal.
+  const expenseId = crypto.randomUUID();
+  const { error: expenseError } = await supabase.from("expenses").insert({
+    id: expenseId,
+    trip_id: tripId,
+    title: "Pelunasan",
+    amount: checked.value.amount,
+    paid_by: checked.value.from,
+    date: today,
+    category: "lain-lain",
+    kind: "settlement",
+  });
 
-  if (expenseError || !expense) {
+  if (expenseError) {
     return { status: "error", message: "Gagal catat pelunasan. Coba lagi sebentar ya." };
   }
 
-  const { error: splitsError } = await supabase.from("expense_splits").insert({
-    expense_id: expense.id,
-    user_id: checked.value.to,
-    share_amount: checked.value.amount,
-  });
+  const { error: splitsError } = await supabase
+    .from("expense_splits")
+    .insert(buildSettlementSplitRow(expenseId, checked.value.to, checked.value.amount));
 
   if (splitsError) {
     // Bersihkan header agar tidak ada settlement yatim tanpa pasangan split.
-    await supabase.from("expenses").delete().eq("id", expense.id);
+    await supabase.from("expenses").delete().eq("id", expenseId);
     return { status: "error", message: "Gagal catat rincian pelunasan. Coba lagi ya." };
   }
 

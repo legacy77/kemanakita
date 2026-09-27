@@ -7,6 +7,8 @@ import {
   formatRupiah,
   toSplitExpenses,
   toSettlementTransfers,
+  buildSplitRows,
+  buildSettlementSplitRow,
   type Expense,
 } from "./split-bill.ts";
 
@@ -326,4 +328,32 @@ test("paritas: helper menghasilkan output identik dengan pemetaan inline lama", 
     [...computeBalances(toSplitExpenses(rows, map), toSettlementTransfers(rows, map)).entries()].sort(),
     [...computeBalances(inlineExpenses, inlineSettlements).entries()].sort(),
   );
+});
+
+// ---------- buildSplitRows / buildSettlementSplitRow ----------
+//
+// Baris insert murni untuk expense-actions.ts & settlement-actions.ts:
+// jumlah(share) === round(amount) agar saldo bisa benar-benar nol.
+
+test("buildSplitRows: jumlah share sama dengan nominal, bentuk baris benar", () => {
+  const rows = buildSplitRows("exp-1", 100_000, ["budi", "andi"]);
+  assert.deepEqual(rows, [
+    { expense_id: "exp-1", user_id: "andi", share_amount: 50_000 },
+    { expense_id: "exp-1", user_id: "budi", share_amount: 50_000 },
+  ]);
+});
+
+test("buildSplitRows: nominal tak habis dibagi tetap pas total (largest remainder)", () => {
+  const rows = buildSplitRows("exp-2", 100_000, ["a", "b", "c"]);
+  const total = rows.reduce((sum, r) => sum + r.share_amount, 0);
+  assert.equal(total, 100_000);
+  assert.equal(rows.length, 3);
+});
+
+test("buildSettlementSplitRow: satu pasangan dari → ke", () => {
+  assert.deepEqual(buildSettlementSplitRow("s-1", "andi", 50_000), {
+    expense_id: "s-1",
+    user_id: "andi",
+    share_amount: 50_000,
+  });
 });

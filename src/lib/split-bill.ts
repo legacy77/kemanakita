@@ -180,3 +180,43 @@ export function toSettlementTransfers(
     })
     .filter((transfer) => transfer.to !== "");
 }
+
+// ---------- Pembentuk baris untuk insert (dipakai server actions) ----------
+
+/** Baris `expense_splits` siap-insert. */
+export interface SplitRow {
+  expense_id: string;
+  user_id: string;
+  share_amount: number;
+}
+
+/**
+ * Bangun baris `expense_splits` untuk pengeluaran biasa. Jaminan
+ * `sum(share_amount) === round(amount)` diwarisi dari `splitEvenly`, sehingga
+ * saldo bisa benar-benar nol. Dipakai `addExpense`/`updateExpense`.
+ */
+export function buildSplitRows(
+  expenseId: string,
+  amount: number,
+  participantIds: string[],
+): SplitRow[] {
+  return [...splitEvenly(amount, participantIds).entries()].map(
+    ([userId, shareAmount]) => ({
+      expense_id: expenseId,
+      user_id: userId,
+      share_amount: shareAmount,
+    }),
+  );
+}
+
+/**
+ * Baris split untuk settlement ("Tandai lunas"): satu pasangan dari → ke.
+ * Dipakai `markSettled`.
+ */
+export function buildSettlementSplitRow(
+  expenseId: string,
+  toUserId: string,
+  amount: number,
+): SplitRow {
+  return { expense_id: expenseId, user_id: toUserId, share_amount: amount };
+}

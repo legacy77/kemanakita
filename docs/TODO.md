@@ -5,7 +5,7 @@
 
 ## Prioritas — 2026-09-27 (PM)
 
-> State: M0 100%. Logika M3/M4 + validasi M2/M3/M4 selesai + halaman `/dashboard` (agregasi personal) selesai. **104 test hijau, HEAD `30c9f9a`.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). M1 migrasi ada tapi belum pernah jalan — belum ada project Supabase / `.env.local`. Guest-mode tunda (PRD §4.6).
+> State: M0 100%. Logika M3/M4 + validasi M2/M3/M4 selesai + halaman `/dashboard` (agregasi personal) selesai. **117 test hijau.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). Nav bawah mobile (`Dashboard | Trip | Gabung | Keluar`) + audit kontras token kanonik (skrip `check-contrast.mjs` sudah token baru, exit 0). `addExpense`/`markSettled` pakai id pra-generate (hindari false-negative RETURNING/RLS); `deleteTrip` cek error + baris terhapus (flash `delete-error`). M1 migrasi ada tapi belum pernah jalan — belum ada project Supabase / `.env.local`; **E2E manual belum dijalankan**. Guest-mode tunda (PRD §4.6).
 > Aturan gate: M1 gate gagal → M2–M6 yang butuh DB parkir. Yang UNBLOCKED boleh maju paralel selama beda file.
 
 ### Arti label
@@ -50,7 +50,7 @@
 - [x] Jawab PRD §12: kategori fixed atau free-form? → **Enum tetap 6** (2026-09-26): `makan`, `transport`, `penginapan`, `tiket`, `belanja`, `lain-lain` — ikut design_system §7 + ikon Lucide
 - [x] `git init` + commit awal (2026-09-26)
 - [x] Scaffold Next.js App Router + TS + Tailwind + fonts (Gabarito + Plus Jakarta Sans) + `lang="id"` (2026-09-26)
-- [x] Token design_system §10 jadi CSS variables + `@theme`; cek kontras tombol `lagoon-700` (2026-09-26: 5.47:1 PASS via `scripts/check-contrast.mjs`)
+- [x] Token design_system §10 jadi CSS variables + `@theme`; cek kontras token kanonik (`sky-600` di `parch-50`: 5.14:1 PASS via `scripts/check-contrast.mjs`, skrip memakai modul `src/lib/contrast.ts` + uji `npm test`) — **2026-09-27**
 
 ## M1 — DB & Supabase (PRD §7)
 
@@ -85,18 +85,19 @@
 
 - [x] Hitung: `share = amount / n`; `saldo = dibayar − bagian`; saran pelunasan minimal (§8 langkah 4) — **2026-09-26** `src/lib/split-bill.ts` (`splitEvenly`, `computeBalances`, `suggestSettlements`, `formatRupiah`)
 - [x] Unit test: saldo + settlement minimal + settlement tercatat (PRD §8 wajib) — **21 test hijau** `src/lib/split-bill.test.ts` via `npm test`
-- [x] Validasi input expense (nominal > 0, `paid_by` member, min 1 peserta split, kategori valid) + parse/format nominal rupiah (design_system §8.2) + metadata 6 kategori + ikon (design_system §7) — **2026-09-27** `src/lib/validate.ts` (`validateExpenseInput`, `parseRupiahInput`, `formatRupiahInput`, `isValidDate`, `EXPENSE_CATEGORIES`, `getExpenseCategory`); **23 test hijau** (expense 10 + kategori 3 + parse/format 8 + tanggal 2) di `src/lib/validate.test.ts` (39 test file ini; total 104 test lolos `npm test`)
-- [ ] CRUD expense (butuh Supabase)
-- [ ] Hapus hanya owner / yang bayar (butuh Supabase)
-- [ ] Tab Keuangan: total bayar vs bagian, saldo/orang, saran "Budi → Andi Rp50.000", tombol "Tandai lunas" (butuh M2/M3)
+- [x] Validasi input expense (nominal > 0, `paid_by` member, min 1 peserta split, kategori valid) + parse/format nominal rupiah (design_system §8.2) + metadata 6 kategori + ikon (design_system §7) — **2026-09-27** `src/lib/validate.ts` (`validateExpenseInput`, `parseRupiahInput`, `formatRupiahInput`, `isValidDate`, `EXPENSE_CATEGORIES`, `getExpenseCategory`); **23 test hijau** (expense 10 + kategori 3 + parse/format 8 + tanggal 2) di `src/lib/validate.test.ts` (39 test file ini; total 117 test lolos `npm test`)
+- [x] CRUD expense (implementasi ada; **verifikasi runtime belum** — butuh Supabase). `addExpense`/`updateExpense`/`deleteExpense` di `src/lib/trips/expense-actions.ts` pakai id pra-generate (`crypto.randomUUID()`) agar tidak bergantung `INSERT ... RETURNING` yang bisa tampak gagal akibat RLS/trigger — **2026-09-27**
+- [x] Hapus hanya owner / yang bayar (RLS `expenses_delete_owner_or_payer`; implementasi ada, verifikasi runtime belum) — **2026-09-27**
+- [x] Tab Keuangan + "Tandai lunas" (`markSettled`, id pra-generate; satu baris split dari→ke) — implementasi ada, verifikasi runtime belum — **2026-09-27**
 - [ ] FAB "+ Pengeluaran"; baris lunas → seksi "Sudah diselesaikan" (collapsed)
-- [ ] Gate: 3 expense uji → saldo & saran benar, unit test hijau
+- [x] `deleteTrip` cek error + jumlah baris terhapus (bukan klaim sukses buta); gagal → redirect `/trips?flash=delete-error` + banner — **2026-09-27**
+- [ ] Gate: 3 expense uji → saldo & saran benar, unit test hijau (**unit test hijau: 117; 3-expense E2E manual belum**)
 
 ## M5 — Polish mobile-first (PRD §6, design_system §12)
 
-- [ ] Bottom tabs `Trip | Itinerary | Keuangan | Anggota`; konten max 640px; safe-area inset
+- [x] Bottom tabs `Dashboard | Trip | Gabung | Keluar` (`src/app/mobile-nav.tsx`, `md:hidden`, sembunyi di `/` `/login`, padding bawah via shell layout) — **2026-09-27**; sisa `safe-area inset` dipertahankan via `env(safe-area-inset-bottom)`
 - [ ] Skeleton loading, toast 3 dtk, modal konfirmasi hapus (fokus trap, `Esc`)
-- [ ] Checklist §12: 360px no scroll-x, tombol ≥44px, `tabular-nums` Rp, ikon+teks status, reduced-motion
+- [x] Checklist §12 (parsial): token kanonik + kontras terverifikasi (`src/lib/contrast.ts` + `scripts/check-contrast.mjs` exit 0); 360px no scroll-x / tombol ≥44px / reduced-motion **belum diverifikasi di HP** — **2026-09-27**
 - [ ] Uji HP asli via preview Vercel (Android + iPhone)
 - [ ] Gate: checklist §12 semua centang
 

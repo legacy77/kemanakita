@@ -80,8 +80,28 @@ export async function deleteTrip(formData: FormData): Promise<void> {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/trips");
 
-  // RLS `trips_delete_owner` hanya lolos bila pemanggil = owner.
-  await supabase.from("trips").delete().eq("id", tripId);
+  // RLS `trips_delete_owner` hanya lolos bila pemanggil = owner. Bila bukan
+  // owner, delete tidak menghapus baris apa pun TANPA error — jadi sekadar
+  // "tidak error" bukan bukti sukses. Bila PostgREST mengembalikan baris yang
+  // terhapus, pastikan minimal 1 baris benar-benar terhapus.
+  const { error, count } = await supabase
+    .from("trips")
+    .delete({ count: "exact" })
+    .eq("id", tripId);
+
+  if (error) {
+    // Jangan klaim sukses; catat di server dan beri sinyal ke UI.
+    console.error("deleteTrip gagal:", error.message);
+    redirect("/trips?flash=delete-error");
+  }
+
+  // `count` hanya terisi bila header Content-Profile/Prefer dikembalikan;
+  // `null` berarti tak tersedia (bukan bukti gagal) → tetap anggap sukses.
+  if (count === 0) {
+    console.error("deleteTrip: 0 baris terhapus (bukan owner?). tripId:", tripId);
+    redirect("/trips?flash=delete-error");
+  }
+
   redirect("/trips");
 }
 

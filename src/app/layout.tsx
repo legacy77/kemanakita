@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { M_PLUS_Rounded_1c, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { MobileNavShell } from "./mobile-nav";
 
 // Display / heading — font membulat yang ramah, nuansa game RPG (design_system §2.1)
 const rounded = M_PLUS_Rounded_1c({
@@ -33,7 +34,9 @@ export default function RootLayout({
       lang="id"
       className={`${rounded.variable} ${plusJakarta.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <MobileNavShell>{children}</MobileNavShell>
+      </body>
     </html>
   );
 }

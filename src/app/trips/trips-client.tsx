@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createTrip, type CreateTripState } from "@/lib/trips/actions";
-import { signOut } from "@/lib/auth/actions";
 import { DeleteTripButton } from "./delete-trip-button";
 import { DisplayNameForm } from "./display-name-form";
 
@@ -26,10 +25,12 @@ export function TripsPageClient({
   userName,
   email,
   trips,
+  deleteError = false,
 }: {
   userName: string;
   email: string;
   trips: TripCard[];
+  deleteError?: boolean;
 }) {
   const [state, action, pending] = useActionState(createTrip, initialState);
   const [formOpen, setFormOpen] = useState(false);
@@ -63,14 +64,17 @@ export function TripsPageClient({
             Trip kamu
           </h1>
         </div>
-        <button
-          type="button"
-          onClick={() => void signOut()}
-          className="rpg-btn flex h-11 shrink-0 items-center rounded-md border-2 border-border-strong px-3 text-[14px] font-semibold text-slate-700"
-        >
-          Keluar
-        </button>
       </header>
+
+      {deleteError && (
+        <p
+          role="alert"
+          className="flex items-start gap-2 rounded-md bg-danger-bg px-3 py-2.5 text-[14px] text-danger"
+        >
+          <span aria-hidden>⚠️</span>
+          Gagal hapus trip. Kamu mungkin bukan owner, atau coba lagi sebentar ya.
+        </p>
+      )}
 
       {trips.length === 0 ? (
         <section className="rpg-panel flex flex-col items-center gap-3 px-4 py-12 text-center">
@@ -216,13 +220,6 @@ export function TripsPageClient({
 
       <footer className="text-center text-[12px] leading-4 text-ink-600">
         Masuk sebagai {email}
-        <span className="mx-2" aria-hidden>
-          ·
-        </span>
-        Punya kode undangan?{" "}
-        <Link href="/join" className="font-semibold text-action underline underline-offset-4">
-          Gabung trip
-        </Link>
         <div className="mt-3">
           <DisplayNameForm initialName={userName} />
         </div>

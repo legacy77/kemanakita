@@ -377,12 +377,21 @@ Di layar ≥1024px, `body` naik ke 16/24.
 
 ### 8.4 Navigasi
 
-**Mobile (bottom tabs):** `Trip | Itinerary | Keuangan | Anggota`
-- Tinggi 60px + safe-area inset bawah.
-- Ikon 24px + label `caption`.
-- Aktif: ikon & label `sky-700`, indikator pill di belakang ikon.
-- Nonaktif: `ink-500`.
-- Header atas: nama trip (bisa ditekan untuk ganti trip) + avatar.
+**Mobile (bottom tabs):** `Dashboard | Trip | Gabung | Keluar`
+- Komponen: `src/app/mobile-nav.tsx` (client, `usePathname()`).
+- Tampil hanya di layar **`md:hidden`** (mobile). Desktop tetap tanpa nav bawah.
+- **Disembunyikan** di `/` (landing) dan `/login*` (gerbang masuk).
+- Tinggi item 56px + `padding-bottom: env(safe-area-inset-bottom)`.
+- Batang: latar `parch-100`, `border-top: 2px solid ink-900`, `fixed` bawah.
+- Ikon 20px + label `caption` (12px). Target sentuh ≥44px.
+- **Aktif:** gradasi `sky-500 → sky-600`, teks & ikon putih, `aria-current="page"`.
+- **Nonaktif:** `ink-600`; hover `parch-200`.
+- **Fokus:** `:focus-visible` global (ring 3px `sky-500` + offset 2px).
+- "Keluar" = `<form action={signOut}>` + `<button>` (bukan Link, tanpa active).
+  Satu-satunya tombol Keluar; "Gabung" satu-satunya tautan `/join`.
+- Ruang bawah: konten diberi `pb` setara tinggi bar (72px) hanya saat nav tampil
+  (`md:` dinolkan), lewat shell di `layout.tsx`.
+- Header atas halaman trip: nama trip + avatar (tidak ada tombol Keluar/gabung).
 
 **Desktop:** nav atas horizontal + konten 2 kolom (itinerary kiri, ringkasan kas
 kanan), sidebar 280px.

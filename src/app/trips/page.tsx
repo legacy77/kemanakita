@@ -8,7 +8,12 @@ export const metadata = { title: "Trip saya — KemanaKita" };
 // Daftar trip milik user (PRD §4.2). Terproteksi: tanpa sesi → /login.
 // Server component agar data diambil dengan sesi user (RLS per member).
 
-export default async function TripsPage() {
+export default async function TripsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ flash?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
   const {
     data: { user },
@@ -49,6 +54,7 @@ export default async function TripsPage() {
       userName={profile?.name ?? ""}
       email={user.email ?? ""}
       trips={trips}
+      deleteError={params.flash === "delete-error"}
     />
   );
 }

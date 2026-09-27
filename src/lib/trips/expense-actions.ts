@@ -8,7 +8,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { validateExpenseInput } from "@/lib/validate";
-import { splitEvenly } from "@/lib/split-bill";
+import { buildSplitRows } from "@/lib/split-bill";
 
 export type ExpenseFormState =
   | { status: "idle" }
@@ -61,36 +61,33 @@ export async function addExpense(
   );
   if (!checked.ok) return { status: "error", message: checked.error };
 
-  const { data: expense, error: expenseError } = await supabase
-    .from("expenses")
-    .insert({
-      trip_id: tripId,
-      title: checked.value.title,
-      amount: checked.value.amount,
-      paid_by: checked.value.paidBy,
-      date: checked.value.date,
-      category: checked.value.category,
-      kind: "expense",
-    })
-    .select("id")
-    .single();
+  // Pre-generate id: jangan `.insert().select().single()`. `expenses` bisa
+  // dibaca member, tapi INSERT ... RETURNING bisa tampak gagal bila ada
+  // interaksi RLS/trigger; id eksplisit membuat operasi deterministik dan
+  // rollback tetap mengacu id yang sama.
+  const expenseId = crypto.randomUUID();
+  const { error: expenseError } = await supabase.from("expenses").insert({
+    id: expenseId,
+    trip_id: tripId,
+    title: checked.value.title,
+    amount: checked.value.amount,
+    paid_by: checked.value.paidBy,
+    date: checked.value.date,
+    category: checked.value.category,
+    kind: "expense",
+  });
 
-  if (expenseError || !expense) {
+  if (expenseError) {
     return { status: "error", message: "Gagal simpan pengeluaran. Coba lagi sebentar ya." };
   }
 
-  const shares = splitEvenly(checked.value.amount, checked.value.participantIds);
-  const { error: splitsError } = await supabase.from("expense_splits").insert(
-    [...shares.entries()].map(([userId, shareAmount]) => ({
-      expense_id: expense.id,
-      user_id: userId,
-      share_amount: shareAmount,
-    })),
-  );
+  const { error: splitsError } = await supabase
+    .from("expense_splits")
+    .insert(buildSplitRows(expenseId, checked.value.amount, checked.value.participantIds));
 
   if (splitsError) {
     // Bersihkan header agar tidak ada pengeluaran tanpa rincian bagi hasil.
-    await supabase.from("expenses").delete().eq("id", expense.id);
+    await supabase.from("expenses").delete().eq("id", expenseId);
     return { status: "error", message: "Gagal simpan rincian bagi hasil. Coba lagi ya." };
   }
 
@@ -191,14 +188,9 @@ export async function updateExpense(
   }
 
   // 3. insert new splits
-  const shares = splitEvenly(checked.value.amount, checked.value.participantIds);
-  const { error: splitsError } = await supabase.from("expense_splits").insert(
-    [...shares.entries()].map(([userId, shareAmount]) => ({
-      expense_id: expenseId,
-      user_id: userId,
-      share_amount: shareAmount,
-    })),
-  );
+  const { error: splitsError } = await supabase
+    .from("expense_splits")
+    .insert(buildSplitRows(expenseId, checked.value.amount, checked.value.participantIds));
 
   if (splitsError) {
     // rollback: delete header + restore old splits
