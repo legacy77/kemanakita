@@ -22,6 +22,7 @@ import { AddExpenseForm } from "./add-expense-form";
 import { DeleteItineraryButton, DeleteExpenseButton } from "./delete-buttons";
 import { EditItineraryForm } from "./edit-itinerary-form";
 import { EditExpenseForm } from "./edit-expense-form";
+import { RemoveMemberButton } from "./remove-member-button";
 import { SettlementButton } from "./settlement-button";
 import { TabNav } from "./tab-nav";
 
@@ -114,6 +115,9 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
   const memberList = members ?? [];
   const memberIds = memberList.map((m) => m.user_id);
   const memberCount = memberList.length;
+  // Peran pemanggil menentukan tombol kelola anggota yang tampil
+  // (owner → kick selain diri; semua → keluar diri). RLS tetap otoritas akhir.
+  const viewerRole = memberList.find((m) => m.user_id === user.id)?.role ?? "member";
 
   // Nama anggota diambil dari profiles yang boleh dibaca oleh sesama anggota
   // (policy `profiles_select_own_or_comember`). Bila kosong, tampilkan id pendek.
@@ -438,25 +442,37 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
             Anggota ({memberCount})
           </h2>
           <ul className="flex flex-col gap-2">
-            {memberList.map((member) => (
-              <li key={member.user_id} className="flex items-center justify-between gap-3">
-                <span className="text-[15px] leading-[21px] text-fg">
-                  {displayName(member.user_id)}
-                  {member.user_id === user.id && (
-                    <span className="text-fg-muted"> (kamu)</span>
-                  )}
-                </span>
-                <span
-                  className={`flex h-6 shrink-0 items-center rounded-full px-2.5 text-[11px] leading-[14px] font-bold tracking-[0.08em] uppercase ${
-                    member.role === "owner"
-                      ? "bg-sunset-100 text-sunset-700"
-                      : "bg-lagoon-50 text-action"
-                  }`}
-                >
-                  {member.role === "owner" ? "👑 Owner" : "Member"}
-                </span>
-              </li>
-            ))}
+            {memberList.map((member) => {
+              const isSelf = member.user_id === user.id;
+              const canKick = viewerRole === "owner" && !isSelf;
+              return (
+                <li key={member.user_id} className="flex items-center justify-between gap-3">
+                  <span className="text-[15px] leading-[21px] text-fg">
+                    {displayName(member.user_id)}
+                    {isSelf && <span className="text-fg-muted"> (kamu)</span>}
+                  </span>
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span
+                      className={`flex h-6 items-center rounded-full px-2.5 text-[11px] leading-[14px] font-bold tracking-[0.08em] uppercase ${
+                        member.role === "owner"
+                          ? "bg-sunset-100 text-sunset-700"
+                          : "bg-lagoon-50 text-action"
+                      }`}
+                    >
+                      {member.role === "owner" ? "👑 Owner" : "Member"}
+                    </span>
+                    {(isSelf || canKick) && (
+                      <RemoveMemberButton
+                        tripId={tripId}
+                        targetUserId={member.user_id}
+                        targetName={displayName(member.user_id)}
+                        isSelf={isSelf}
+                      />
+                    )}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
           <Link
             href={inviteUrl}
