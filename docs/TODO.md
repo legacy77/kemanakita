@@ -26,6 +26,7 @@
 - [ ] Invite link `/join?code=`: buka → login → auto-join member
 - [ ] Owner hapus trip / kick; non-member buka trip → redirect + "Kamu belum jadi anggota trip ini"
 - [ ] Kode invite salah → "Kode tidak valid" + tombol minta kode baru
+- [x] Validasi form trip (judul wajib, tanggal selesai ≥ mulai) — **2026-09-27** `src/lib/validate.ts` (`validateTripInput`); **7 test hijau**, + format kode invite (12 hex, `validateInviteCode`) — **2 test**
 - [ ] Gate: 2 akun uji join via link berhasil
 
 ## M3 — Itinerary (PRD §4.4)
@@ -34,6 +35,7 @@
 - [ ] Tab Itinerary UI di `/trips/[id]` (butuh M2)
 - [ ] CRUD item (jam, judul, lokasi, catatan); semua member bisa edit (butuh Supabase)
 - [ ] Bottom-sheet form di HP, modal tengah di desktop; validasi inline tanpa reload
+- [x] Validasi input itinerary (judul wajib, tanggal kalender sah, jam format HH:MM) — **2026-09-27** `src/lib/validate.ts` (`validateItineraryInput`); **7 test hijau**
 - [ ] Realtime Supabase untuk edit bareng
 - [ ] Empty state: "Belum ada rencana. Yuk bikin trip pertama kita!"
 - [ ] Gate: tambah/ubah/hapus tanpa error, urutan benar
@@ -42,6 +44,7 @@
 
 - [x] Hitung: `share = amount / n`; `saldo = dibayar − bagian`; saran pelunasan minimal (§8 langkah 4) — **2026-09-26** `src/lib/split-bill.ts` (`splitEvenly`, `computeBalances`, `suggestSettlements`, `formatRupiah`)
 - [x] Unit test: saldo + settlement minimal + settlement tercatat (PRD §8 wajib) — **21 test hijau** `src/lib/split-bill.test.ts` via `npm test`
+- [x] Validasi input expense (nominal > 0, `paid_by` member, min 1 peserta split, kategori valid) + parse/format nominal rupiah (design_system §8.2) + metadata 6 kategori + ikon (design_system §7) — **2026-09-27** `src/lib/validate.ts` (`validateExpenseInput`, `parseRupiahInput`, `formatRupiahInput`, `isValidDate`, `EXPENSE_CATEGORIES`, `getExpenseCategory`); **23 test hijau** (expense 10 + kategori 3 + parse/format 8 + tanggal 2) di `src/lib/validate.test.ts` (39 test file ini; total 76 test lolos `npm test`)
 - [ ] CRUD expense (butuh Supabase)
 - [ ] Hapus hanya owner / yang bayar (butuh Supabase)
 - [ ] Tab Keuangan: total bayar vs bagian, saldo/orang, saran "Budi → Andi Rp50.000", tombol "Tandai lunas" (butuh M2/M3)
