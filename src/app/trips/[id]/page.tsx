@@ -7,6 +7,7 @@ import {
   groupItineraryByDay,
   formatDayLabel,
   formatTripDate,
+  getItineraryCategory,
   type ItineraryItem,
 } from "@/lib/itinerary";
 import {
@@ -88,7 +89,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
         .eq("trip_id", tripId),
       supabase
         .from("itinerary_items")
-        .select("id, date, time, title, notes, location, sort_order")
+        .select("id, date, time, title, notes, location, sort_order, category")
         .eq("trip_id", tripId)
         .order("date", { ascending: true }),
       supabase
@@ -136,6 +137,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
     notes: row.notes,
     location: row.location,
     sortOrder: row.sort_order,
+    category: row.category,
   }));
   const days = groupItineraryByDay(itineraryItems, trip.start_date, trip.end_date);
   const tripDayCount = eachDayInRange(trip.start_date, trip.end_date).length;
@@ -220,50 +222,77 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
                 </p>
               ) : (
                 <ul className="mt-2 flex flex-col gap-2">
-                  {day.items.map((item) => (
-                    <li
-                      key={item.id}
-                      className="flex flex-col gap-2 rounded-md border border-border px-3 py-2.5"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="text-[15px] leading-[21px] font-semibold text-fg">
-                            {item.time !== null && (
-                              <span className="mr-2 rounded bg-lagoon-50 px-1.5 py-0.5 text-[13px] font-bold text-action">
-                                {item.time}
-                              </span>
-                            )}
-                            {item.title}
-                          </p>
-                          {(item.location !== null && item.location !== "") ||
-                          (item.notes !== null && item.notes !== "") ? (
-                            <p className="mt-0.5 truncate text-[13px] leading-5 text-fg-muted">
-                              {[item.location, item.notes].filter((v) => v !== null && v !== "").join(" · ")}
+                  {day.items.map((item) => {
+                    const category = getItineraryCategory(item.category);
+                    return (
+                      <li
+                        key={item.id}
+                        className="flex flex-col gap-2 rounded-md border border-border px-3 py-2.5"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[15px] leading-[21px] font-semibold text-fg">
+                              {item.time !== null && (
+                                <span className="mr-2 rounded bg-lagoon-50 px-1.5 py-0.5 text-[13px] font-bold text-action">
+                                  {item.time}
+                                </span>
+                              )}
+                              {category && (
+                                <span className="mr-2 align-middle" aria-hidden>
+                                  {category.icon}
+                                </span>
+                              )}
+                              <span className="line-clamp-2">{item.title}</span>
                             </p>
-                          ) : null}
+                            {category && (
+                              <p className="mt-0.5 text-[12px] leading-4 font-semibold text-fg-muted">
+                                {category.label}
+                              </p>
+                            )}
+                            {item.location !== null && item.location !== "" && (
+                              <p className="mt-0.5 text-[13px] leading-5 text-fg-muted">
+                                <span aria-hidden>📍</span> {item.location}
+                              </p>
+                            )}
+                            {item.notes !== null && item.notes !== "" && (
+                              <p className="mt-0.5 text-[13px] leading-5 text-fg-muted">
+                                <span aria-hidden>📝</span> {item.notes}
+                              </p>
+                            )}
+                          </div>
+                          <DeleteItineraryButton
+                            tripId={tripId}
+                            itemId={item.id}
+                            itemTitle={item.title}
+                          />
                         </div>
-                        <DeleteItineraryButton tripId={tripId} itemId={item.id} />
-                      </div>
-                      <EditItineraryForm
-                        tripId={tripId}
-                        itemId={item.id}
-                        startDate={trip.start_date}
-                        endDate={trip.end_date}
-                        defaultValues={{
-                          date: item.date,
-                          time: item.time ?? "",
-                          title: item.title,
-                          location: item.location ?? "",
-                          notes: item.notes ?? "",
-                        }}
-                      />
-                    </li>
-                  ))}
+                        <EditItineraryForm
+                          tripId={tripId}
+                          itemId={item.id}
+                          startDate={trip.start_date}
+                          endDate={trip.end_date}
+                          defaultValues={{
+                            date: item.date,
+                            time: item.time ?? "",
+                            title: item.title,
+                            location: item.location ?? "",
+                            notes: item.notes ?? "",
+                            category: item.category,
+                          }}
+                        />
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
+              <AddItineraryForm
+                tripId={tripId}
+                startDate={trip.start_date}
+                endDate={trip.end_date}
+                defaultDate={day.date}
+              />
             </article>
           ))}
-          <AddItineraryForm tripId={tripId} startDate={trip.start_date} endDate={trip.end_date} />
         </section>
       )}
 

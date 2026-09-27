@@ -15,6 +15,14 @@ export type ExpenseCategory =
 
 export type ExpenseKind = "expense" | "settlement";
 
+export type ItineraryCategory =
+  | "makan"
+  | "transport"
+  | "penginapan"
+  | "tiket"
+  | "aktivitas"
+  | "lain-lain";
+
 export interface Database {
   public: {
     Tables: {
@@ -89,6 +97,7 @@ export interface Database {
           notes: string | null;
           location: string | null;
           sort_order: number;
+          category: ItineraryCategory;
           created_at: string;
         };
         Insert: {
@@ -100,6 +109,7 @@ export interface Database {
           notes?: string | null;
           location?: string | null;
           sort_order?: number;
+          category?: ItineraryCategory;
           created_at?: string;
         };
         Update: {
@@ -109,6 +119,7 @@ export interface Database {
           notes?: string | null;
           location?: string | null;
           sort_order?: number;
+          category?: ItineraryCategory;
         };
         Relationships: [];
       };
@@ -191,6 +202,7 @@ export interface Database {
       trip_role: TripRole;
       expense_category: ExpenseCategory;
       expense_kind: ExpenseKind;
+      itinerary_category: ItineraryCategory;
     };
     CompositeTypes: Record<string, never>;
   };

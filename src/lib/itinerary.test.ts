@@ -5,6 +5,10 @@ import {
   groupItineraryByDay,
   formatTripDate,
   formatDayLabel,
+  ITINERARY_CATEGORIES,
+  DEFAULT_ITINERARY_CATEGORY,
+  getItineraryCategory,
+  isItineraryCategoryKey,
   type ItineraryItem,
 } from "./itinerary.ts";
 
@@ -45,10 +49,10 @@ test("eachDayInRange: tanggal akhir sebelum mulai ditolak", () => {
 // ---------- groupItineraryByDay ----------
 
 const items: ItineraryItem[] = [
-  { id: "3", date: "2026-10-12", time: "18:00", title: "Makan malam", sortOrder: 0 },
-  { id: "1", date: "2026-10-12", time: "09:00", title: "Sarapan", sortOrder: 0 },
-  { id: "2", date: "2026-10-12", time: "09:00", title: "Jalan pagi", sortOrder: 1 },
-  { id: "4", date: "2026-10-13", time: "07:00", title: "Sunrise", sortOrder: 0 },
+  { id: "3", date: "2026-10-12", time: "18:00", title: "Makan malam", sortOrder: 0, category: "makan" },
+  { id: "1", date: "2026-10-12", time: "09:00", title: "Sarapan", sortOrder: 0, category: "makan" },
+  { id: "2", date: "2026-10-12", time: "09:00", title: "Jalan pagi", sortOrder: 1, category: "aktivitas" },
+  { id: "4", date: "2026-10-13", time: "07:00", title: "Sunrise", sortOrder: 0, category: "aktivitas" },
 ];
 
 test("groupItineraryByDay: mengelompokkan per hari", () => {
@@ -76,8 +80,8 @@ test("groupItineraryByDay: hari tanpa item tetap muncul (rentang trip)", () => {
 
 test("groupItineraryByDay: item tanpa jam ditaruh paling akhir di harinya", () => {
   const withUntimed: ItineraryItem[] = [
-    { id: "b", date: "2026-10-12", time: null, title: "Belum dijadwalkan", sortOrder: 0 },
-    { id: "a", date: "2026-10-12", time: "08:00", title: "Pagi", sortOrder: 5 },
+    { id: "b", date: "2026-10-12", time: null, title: "Belum dijadwalkan", sortOrder: 0, category: "lain-lain" },
+    { id: "a", date: "2026-10-12", time: "08:00", title: "Pagi", sortOrder: 5, category: "aktivitas" },
   ];
   const groups = groupItineraryByDay(withUntimed, "2026-10-12", "2026-10-12");
   assert.deepEqual(groups[0].items.map((i) => i.id), ["a", "b"]);
@@ -85,8 +89,8 @@ test("groupItineraryByDay: item tanpa jam ditaruh paling akhir di harinya", () =
 
 test("groupItineraryByDay: urutan deterministik saat jam & sortOrder sama", () => {
   const tie: ItineraryItem[] = [
-    { id: "z", date: "2026-10-12", time: "10:00", title: "Zeta", sortOrder: 0 },
-    { id: "a", date: "2026-10-12", time: "10:00", title: "Alfa", sortOrder: 0 },
+    { id: "z", date: "2026-10-12", time: "10:00", title: "Zeta", sortOrder: 0, category: "makan" },
+    { id: "a", date: "2026-10-12", time: "10:00", title: "Alfa", sortOrder: 0, category: "makan" },
   ];
   const groups = groupItineraryByDay(tie, "2026-10-12", "2026-10-12");
   assert.deepEqual(groups[0].items.map((i) => i.title), ["Alfa", "Zeta"]);
@@ -94,7 +98,7 @@ test("groupItineraryByDay: urutan deterministik saat jam & sortOrder sama", () =
 
 test("groupItineraryByDay: item di luar rentang tetap muncul, tidak hilang", () => {
   const outside: ItineraryItem[] = [
-    { id: "x", date: "2026-10-20", time: "10:00", title: "Di luar rentang", sortOrder: 0 },
+    { id: "x", date: "2026-10-20", time: "10:00", title: "Di luar rentang", sortOrder: 0, category: "tiket" },
   ];
   const groups = groupItineraryByDay(outside, "2026-10-12", "2026-10-13");
   const allIds = groups.flatMap((g) => g.items.map((i) => i.id));
@@ -112,6 +116,48 @@ test("groupItineraryByDay: tidak mengubah array input", () => {
   const snapshot = input.map((i) => i.id);
   groupItineraryByDay(input, "2026-10-12", "2026-10-13");
   assert.deepEqual(input.map((i) => i.id), snapshot);
+});
+
+test("groupItineraryByDay: kategori item dipertahankan apa adanya", () => {
+  const groups = groupItineraryByDay(items, "2026-10-12", "2026-10-13");
+  const byId = new Map(groups.flatMap((g) => g.items).map((i) => [i.id, i.category]));
+  assert.equal(byId.get("1"), "makan");
+  assert.equal(byId.get("2"), "aktivitas");
+  assert.equal(byId.get("4"), "aktivitas");
+});
+
+// ---------- kategori itinerary ----------
+
+test("ITINERARY_CATEGORIES: 6 kategori tetap, urut sesuai enum migrasi", () => {
+  assert.deepEqual(
+    ITINERARY_CATEGORIES.map((c) => c.key),
+    ["makan", "transport", "penginapan", "tiket", "aktivitas", "lain-lain"],
+  );
+});
+
+test("ITINERARY_CATEGORIES: setiap kategori punya label & ikon non-kosong", () => {
+  for (const c of ITINERARY_CATEGORIES) {
+    assert.ok(c.label.length > 0, `label ${c.key}`);
+    assert.ok(c.icon.length > 0, `ikon ${c.key}`);
+  }
+});
+
+test("DEFAULT_ITINERARY_CATEGORY = lain-lain", () => {
+  assert.equal(DEFAULT_ITINERARY_CATEGORY, "lain-lain");
+});
+
+test("getItineraryCategory: metadata ada; null untuk kunci asing", () => {
+  assert.equal(getItineraryCategory("makan")?.label, "Makan");
+  assert.equal(getItineraryCategory("aktivitas")?.icon, "🎯");
+  assert.equal(getItineraryCategory("ngawur"), null);
+});
+
+test("isItineraryCategoryKey: true untuk 6 sah, false untuk asing", () => {
+  for (const key of ITINERARY_CATEGORIES) {
+    assert.equal(isItineraryCategoryKey(key.key), true, key.key);
+  }
+  assert.equal(isItineraryCategoryKey("belanja"), false); // kategori expense, bukan itinerary
+  assert.equal(isItineraryCategoryKey(""), false);
 });
 
 // ---------- format tanggal ----------

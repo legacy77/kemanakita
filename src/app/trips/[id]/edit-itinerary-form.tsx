@@ -8,6 +8,7 @@ import {
   updateItineraryItem,
   type ItineraryFormState,
 } from "@/lib/trips/itinerary-actions";
+import { ItineraryCategoryField } from "./itinerary-category-field";
 
 const initialState: ItineraryFormState = { status: "idle" };
 
@@ -28,17 +29,18 @@ export function EditItineraryForm({
     title: string;
     location: string;
     notes: string;
+    category: string;
   };
 }) {
   const [state, action, pending] = useActionState(updateItineraryItem, initialState);
 
   return (
-    <details className="rpg-panel">
+    <details className="rounded-md border border-border">
       <summary
-        className="cursor-pointer list-none px-3 py-2 font-display text-[13px] font-bold text-gold-700"
+        className="flex min-h-11 cursor-pointer list-none items-center px-3 text-[14px] font-semibold text-action"
         aria-label={`Ubah agenda ${defaultValues.title}`}
       >
-        ✏️ Ubah
+        ✏️ Ubah agenda
       </summary>
       <form action={action} className="flex flex-col gap-3 border-t border-border p-3">
         <input type="hidden" name="tripId" value={tripId} />
@@ -78,6 +80,8 @@ export function EditItineraryForm({
             />
           </label>
         </div>
+
+        <ItineraryCategoryField defaultValue={defaultValues.category} />
 
         <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-fg">
           Lokasi (opsional)

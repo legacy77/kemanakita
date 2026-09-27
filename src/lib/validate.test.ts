@@ -365,6 +365,7 @@ test("validateItineraryInput: input valid dinormalisasi", () => {
     title: "  Sarapan  ",
     location: " Warung ",
     notes: "  jangan pedes  ",
+    category: "makan",
   });
   assert.deepEqual(result, {
     ok: true,
@@ -374,8 +375,43 @@ test("validateItineraryInput: input valid dinormalisasi", () => {
       title: "Sarapan",
       location: "Warung",
       notes: "jangan pedes",
+      category: "makan",
     },
   });
+});
+
+test("validateItineraryInput: kategori default lain-lain bila kosong", () => {
+  const result = validateItineraryInput({ date: "2026-10-12", title: "Bebas" });
+  assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.value.category, "lain-lain");
+});
+
+test("validateItineraryInput: kategori sah diteruskan apa adanya", () => {
+  for (const category of [
+    "makan",
+    "transport",
+    "penginapan",
+    "tiket",
+    "aktivitas",
+    "lain-lain",
+  ]) {
+    const result = validateItineraryInput({ date: "2026-10-12", title: "X", category });
+    assert.equal(result.ok, true, category);
+    if (result.ok) assert.equal(result.value.category, category);
+  }
+});
+
+test("validateItineraryInput: kategori asing ditolak", () => {
+  for (const category of ["belanja", "ngawur", "MAKAN"]) {
+    const result = validateItineraryInput({ date: "2026-10-12", title: "X", category });
+    assert.deepEqual(result, { ok: false, error: "Kategori agenda tidak dikenal." }, category);
+  }
+});
+
+test("validateItineraryInput: kategori di-trim sebelum dicocokkan", () => {
+  const result = validateItineraryInput({ date: "2026-10-12", title: "X", category: " aktivitas " });
+  assert.equal(result.ok, true);
+  if (result.ok) assert.equal(result.value.category, "aktivitas");
 });
 
 test("validateItineraryInput: jam opsional → null", () => {

@@ -236,6 +236,12 @@ export function validateExpenseInput(
 
 // ---------- Itinerary (PRD §4.4) ----------
 
+import {
+  DEFAULT_ITINERARY_CATEGORY,
+  isItineraryCategoryKey,
+  type ItineraryCategoryKey,
+} from "./itinerary.ts";
+
 const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export interface ItineraryInput {
@@ -245,6 +251,8 @@ export interface ItineraryInput {
   title: string;
   location?: string | null;
   notes?: string | null;
+  /** Kategori agenda; kosong/null → default `lain-lain`. */
+  category?: string | null;
 }
 
 export interface ItineraryInputValid {
@@ -253,12 +261,14 @@ export interface ItineraryInputValid {
   title: string;
   location: string;
   notes: string;
+  category: ItineraryCategoryKey;
 }
 
 /**
- * Validasi item itinerary (PRD §4.4). Tanggal sengaja TIDAK dibatasi ke rentang
- * trip — konsisten dengan ruling `itinerary.ts`: item di luar rentang tetap
- * ditampilkan (ditempel ke hari terdekat), bukan dibuang.
+ * Validasi item itinerary (PRD §4.4). Fungsi ini murni per-field; rentang
+ * tanggal trip dicek terpisah di server action (`itinerary-actions.ts`) karena
+ * butuh query DB. Di sini tanggal hanya divalidasi sebagai tanggal kalender sah.
+ * Kategori kosong → `lain-lain`; kategori asing ditolak.
  */
 export function validateItineraryInput(
   input: ItineraryInput,
@@ -275,6 +285,12 @@ export function validateItineraryInput(
     return { ok: false, error: "Jam harus format HH:MM." };
   }
 
+  const categoryRaw = (input.category ?? "").trim();
+  if (categoryRaw !== "" && !isItineraryCategoryKey(categoryRaw)) {
+    return { ok: false, error: "Kategori agenda tidak dikenal." };
+  }
+  const category = categoryRaw === "" ? DEFAULT_ITINERARY_CATEGORY : categoryRaw;
+
   return {
     ok: true,
     value: {
@@ -283,6 +299,7 @@ export function validateItineraryInput(
       title,
       location: (input.location ?? "").trim(),
       notes: (input.notes ?? "").trim(),
+      category,
     },
   };
 }

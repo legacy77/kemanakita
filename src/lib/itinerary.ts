@@ -4,6 +4,54 @@
 // Item tanpa jam ditaruh paling akhir di harinya, bukan dibuang.
 // Tanggal selalu string `YYYY-MM-DD` agar tidak bergeser karena zona waktu.
 
+/** 6 nilai enum tetap, sinkron dengan `public.itinerary_category` di migrasi. */
+export type ItineraryCategoryKey =
+  | "makan"
+  | "transport"
+  | "penginapan"
+  | "tiket"
+  | "aktivitas"
+  | "lain-lain";
+
+export interface ItineraryCategory {
+  key: ItineraryCategoryKey;
+  /** Label tampil Bahasa Indonesia. */
+  label: string;
+  /** Emoji sebagai ikon (tanpa dependensi Lucide di daftar agenda). */
+  icon: string;
+}
+
+/**
+ * Kategori itinerary (PRD §4.4). Urutan mengikuti enum migrasi.
+ * Sengaja beda dari `EXPENSE_CATEGORIES`: itinerary punya 'aktivitas'
+ * (bukan 'belanja') karena agenda liburan belum tentu pengeluaran.
+ */
+export const ITINERARY_CATEGORIES: readonly ItineraryCategory[] = [
+  { key: "makan", label: "Makan", icon: "🍽️" },
+  { key: "transport", label: "Transport", icon: "🚗" },
+  { key: "penginapan", label: "Penginapan", icon: "🛏️" },
+  { key: "tiket", label: "Tiket", icon: "🎟️" },
+  { key: "aktivitas", label: "Aktivitas", icon: "🎯" },
+  { key: "lain-lain", label: "Lain-lain", icon: "📌" },
+] as const;
+
+/** Default kategori bila tidak dipilih (sinkron default kolom DB). */
+export const DEFAULT_ITINERARY_CATEGORY: ItineraryCategoryKey = "lain-lain";
+
+const ITINERARY_CATEGORY_BY_KEY = new Map(
+  ITINERARY_CATEGORIES.map((c) => [c.key, c]),
+);
+
+/** Metadata kategori, atau `null` bila kunci tidak dikenal. */
+export function getItineraryCategory(key: string): ItineraryCategory | null {
+  return ITINERARY_CATEGORY_BY_KEY.get(key as ItineraryCategoryKey) ?? null;
+}
+
+/** `true` bila kunci termasuk 6 kategori sah. */
+export function isItineraryCategoryKey(value: string): value is ItineraryCategoryKey {
+  return ITINERARY_CATEGORY_BY_KEY.has(value as ItineraryCategoryKey);
+}
+
 export interface ItineraryItem {
   id: string;
   /** `YYYY-MM-DD`. */
@@ -14,6 +62,7 @@ export interface ItineraryItem {
   notes?: string | null;
   location?: string | null;
   sortOrder: number;
+  category: ItineraryCategoryKey;
 }
 
 export interface ItineraryDay {
