@@ -299,3 +299,45 @@ export function validateInviteCode(code: string): ValidationResult<string> {
   }
   return { ok: true, value: normalized };
 }
+
+// ---------- Settlement / Tandai lunas (PRD §4.5, §8 langkah 5) ----------
+
+export interface SettlementInput {
+  /** id user yang membayar (berutang). */
+  from: string;
+  /** id user yang menerima (berpiutang). */
+  to: string;
+  /** Teks nominal mentah dari form (mis. "50.000"). */
+  amount: string;
+}
+
+export interface SettlementInputValid {
+  from: string;
+  to: string;
+  amount: number;
+}
+
+/**
+ * Validasi "Tandai lunas" (PRD §8 langkah 5): nominal > 0 dan dua pihak harus
+ * berbeda. Keanggotaan `from`/`to` dicek di server action terhadap DB (jangan
+ * percaya klien), sama seperti `validateExpenseInput` untuk `paid_by`.
+ */
+export function validateSettlementInput(
+  input: SettlementInput,
+): ValidationResult<SettlementInputValid> {
+  const from = input.from.trim();
+  const to = input.to.trim();
+  if (from === "" || to === "") {
+    return { ok: false, error: "Pihak pembayaran nggak dikenali. Muat ulang halamannya ya." };
+  }
+  if (from === to) {
+    return { ok: false, error: "Nggak bisa tandai lunas ke diri sendiri." };
+  }
+
+  const amount = parseRupiahInput(input.amount);
+  if (amount === null || amount <= 0) {
+    return { ok: false, error: "Nominal harus lebih dari 0." };
+  }
+
+  return { ok: true, value: { from, to, amount } };
+}

@@ -20,6 +20,7 @@ import { EXPENSE_CATEGORIES } from "@/lib/validate";
 import { AddItineraryForm } from "./add-itinerary-form";
 import { AddExpenseForm } from "./add-expense-form";
 import { DeleteItineraryButton, DeleteExpenseButton } from "./delete-buttons";
+import { SettlementButton } from "./settlement-button";
 import { TabNav } from "./tab-nav";
 
 // Detail trip (PRD §4.2–§4.5, §6.3): hanya anggota yang bisa buka.
@@ -146,14 +147,16 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
     splitsByExpense.set(row.expense_id, list);
   }
 
-  const splitExpenses: SplitExpense[] = expenseList
-    .filter((e) => e.kind !== "settlement")
-    .map((e) => ({
-      amount: Math.round(Number(e.amount)),
-      paidBy: e.paid_by,
-      participantIds: (splitsByExpense.get(e.id) ?? []).map((s) => s.user_id),
-    }))
-    .filter((e) => e.participantIds.length > 0);
+  // Non-settlement vs settlement dipisah untuk daftar + seksi collapsed
+  // "Sudah diselesaikan" (PRD §4.5: FAB; baris lunas → seksi collapsed).
+  const regularExpenses = expenseList.filter((e) => e.kind !== "settlement");
+  const settlementRows = expenseList.filter((e) => e.kind === "settlement");
+
+  const splitExpenses: SplitExpense[] = regularExpenses.map((e) => ({
+    amount: Math.round(Number(e.amount)),
+    paidBy: e.paid_by,
+    participantIds: (splitsByExpense.get(e.id) ?? []).map((s) => s.user_id),
+  })).filter((e) => e.participantIds.length > 0);
 
   const settlements: Transfer[] = expenseList
     .filter((e) => e.kind === "settlement")
@@ -281,11 +284,23 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
             {suggestions.length > 0 && (
               <div className="mt-2 rounded-md bg-sunset-50 px-3 py-2.5">
                 <p className="text-[14px] leading-5 font-semibold text-fg">Saran transfer</p>
-                <ul className="mt-1 flex flex-col gap-1">
+                <ul className="mt-1 flex flex-col gap-2">
                   {suggestions.map((s, index) => (
-                    <li key={`${s.from}-${s.to}-${index}`} className="text-[14px] leading-5 text-fg">
-                      {displayName(s.from)} → {displayName(s.to)}:{" "}
-                      <strong>{formatRupiah(s.amount)}</strong>
+                    <li
+                      key={`${s.from}-${s.to}-${index}`}
+                      className="flex items-center justify-between gap-3 text-[14px] leading-5 text-fg"
+                    >
+                      <span>
+                        {displayName(s.from)} → {displayName(s.to)}:{" "}
+                        <strong>{formatRupiah(s.amount)}</strong>
+                      </span>
+                      <SettlementButton
+                        tripId={tripId}
+                        from={s.from}
+                        to={s.to}
+                        amount={s.amount}
+                        label={`Tandai lunas: ${displayName(s.from)} ke ${displayName(s.to)} ${formatRupiah(s.amount)}`}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -293,42 +308,83 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
             )}
           </article>
 
-          {expenseList.length === 0 ? (
+          {regularExpenses.length === 0 && settlementRows.length === 0 ? (
             <p className="rounded-lg border border-border bg-surface px-4 py-8 text-center text-[15px] text-fg-muted">
               Belum ada pengeluaran. Catat yang pertama di bawah ya.
             </p>
           ) : (
-            <ul className="flex flex-col gap-3">
-              {expenseList.map((expense) => {
-                const category = CATEGORY_BY_KEY.get(expense.category);
-                const splits = splitsByExpense.get(expense.id) ?? [];
-                return (
-                  <li
-                    key={expense.id}
-                    className="rounded-lg border border-border bg-surface p-4 shadow-sm"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-[15px] leading-[21px] font-semibold text-fg">
-                          {expense.title}
-                        </p>
-                        <p className="mt-0.5 text-[13px] leading-5 text-fg-muted">
-                          {category ? `${category.label} · ` : ""}
-                          {displayName(expense.paid_by)} membayar · {formatTripDate(expense.date)} ·{" "}
-                          {splits.length} orang
-                        </p>
-                      </div>
-                      <p className="shrink-0 text-[15px] leading-[21px] font-bold text-fg">
-                        {formatRupiah(Math.round(Number(expense.amount)))}
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <DeleteExpenseButton tripId={tripId} expenseId={expense.id} />
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+            <>
+              {regularExpenses.length === 0 ? (
+                <p className="rounded-lg border border-border bg-surface px-4 py-8 text-center text-[15px] text-fg-muted">
+                  Semua pengeluaran sudah masuk daftar pelunasan di bawah.
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-3">
+                  {regularExpenses.map((expense) => {
+                    const category = CATEGORY_BY_KEY.get(expense.category);
+                    const splits = splitsByExpense.get(expense.id) ?? [];
+                    return (
+                      <li
+                        key={expense.id}
+                        className="rounded-lg border border-border bg-surface p-4 shadow-sm"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-[15px] leading-[21px] font-semibold text-fg">
+                              {expense.title}
+                            </p>
+                            <p className="mt-0.5 text-[13px] leading-5 text-fg-muted">
+                              {category ? `${category.label} · ` : ""}
+                              {displayName(expense.paid_by)} membayar · {formatTripDate(expense.date)} ·{" "}
+                              {splits.length} orang
+                            </p>
+                          </div>
+                          <p className="tnum shrink-0 text-[15px] leading-[21px] font-bold text-fg">
+                            {formatRupiah(Math.round(Number(expense.amount)))}
+                          </p>
+                        </div>
+                        <div className="mt-2">
+                          <DeleteExpenseButton tripId={tripId} expenseId={expense.id} />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+
+              {settlementRows.length > 0 && (
+                <details className="rounded-lg border border-border bg-surface shadow-sm">
+                  <summary className="cursor-pointer list-none px-4 py-3 text-[15px] font-semibold text-action">
+                    ✅ Sudah diselesaikan ({settlementRows.length})
+                  </summary>
+                  <ul className="flex flex-col gap-2 border-t border-border p-4">
+                    {settlementRows.map((expense) => {
+                      const splits = splitsByExpense.get(expense.id) ?? [];
+                      const receiver = splits[0]?.user_id;
+                      return (
+                        <li
+                          key={expense.id}
+                          className="flex items-start justify-between gap-3 rounded-md border border-border px-3 py-2.5"
+                        >
+                          <div className="min-w-0">
+                            <p className="text-[15px] leading-[21px] font-semibold text-fg">
+                              {displayName(expense.paid_by)} →{" "}
+                              {receiver ? displayName(receiver) : "?"}
+                            </p>
+                            <p className="mt-0.5 text-[13px] leading-5 text-fg-muted">
+                              {formatTripDate(expense.date)}
+                            </p>
+                          </div>
+                          <p className="tnum shrink-0 text-[15px] leading-[21px] font-bold text-fg">
+                            {formatRupiah(Math.round(Number(expense.amount)))}
+                          </p>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </details>
+              )}
+            </>
           )}
 
           <AddExpenseForm

@@ -9,6 +9,7 @@ import {
   validateTripInput,
   validateExpenseInput,
   validateItineraryInput,
+  validateSettlementInput,
   validateInviteCode,
 } from "./validate.ts";
 
@@ -430,5 +431,25 @@ test("validateInviteCode: format salah ditolak", () => {
       ok: false,
       error: "Kode undangan tidak valid.",
     });
+  }
+});
+
+// ---------- validasi settlement (PRD §4.5, §8) ----------
+
+test("validateSettlementInput menerima transfer positif antar user berbeda", () => {
+  assert.deepEqual(validateSettlementInput({ from: "a", to: "b", amount: "Rp 50.000" }), {
+    ok: true,
+    value: { from: "a", to: "b", amount: 50_000 },
+  });
+});
+
+test("validateSettlementInput menolak user sama, nominal invalid, dan ID kosong", () => {
+  for (const input of [
+    { from: "a", to: "a", amount: "1000" },
+    { from: "", to: "b", amount: "1000" },
+    { from: "a", to: "b", amount: "0" },
+    { from: "a", to: "b", amount: "abc" },
+  ]) {
+    assert.equal(validateSettlementInput(input).ok, false);
   }
 });
