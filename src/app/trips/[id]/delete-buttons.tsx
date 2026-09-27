@@ -15,7 +15,7 @@ function PendingHapus() {
       disabled={pending}
       aria-label="Hapus"
       title="Hapus"
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border text-[15px] text-slate-500 transition-colors hover:text-danger disabled:opacity-50"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border-2 border-border-strong bg-surface text-[15px] text-slate-500 transition-colors hover:text-danger disabled:opacity-50"
     >
       <span aria-hidden>{pending ? "…" : "🗑️"}</span>
     </button>

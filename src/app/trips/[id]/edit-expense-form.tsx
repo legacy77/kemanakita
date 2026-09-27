@@ -45,9 +45,9 @@ export function EditExpenseForm({
   );
 
   return (
-    <details className="rounded-md border border-border">
+    <details className="rpg-panel">
       <summary
-        className="cursor-pointer list-none px-3 py-2 text-[13px] font-semibold text-action"
+        className="cursor-pointer list-none px-3 py-2 font-display text-[13px] font-bold text-gold-700"
         aria-label={`Ubah pengeluaran ${defaultValues.title}`}
       >
         ✏️ Ubah
@@ -63,7 +63,7 @@ export function EditExpenseForm({
             required
             maxLength={160}
             defaultValue={defaultValues.title}
-            className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+            className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
           />
         </label>
 
@@ -78,7 +78,7 @@ export function EditExpenseForm({
               const parsed = parseRupiahInput(e.target.value);
               setAmountText(parsed === null ? e.target.value : formatRupiahInput(parsed));
             }}
-            className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+            className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
           />
         </label>
 
@@ -88,7 +88,7 @@ export function EditExpenseForm({
             <select
               name="paidBy"
               defaultValue={defaultValues.paidBy}
-              className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+              className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
             >
               {memberIds.map((id) => (
                 <option key={id} value={id}>
@@ -102,7 +102,7 @@ export function EditExpenseForm({
             <select
               name="category"
               defaultValue={defaultValues.category}
-              className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+              className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
             >
               {EXPENSE_CATEGORIES.map((c) => (
                 <option key={c.key} value={c.key}>
@@ -120,7 +120,7 @@ export function EditExpenseForm({
             type="date"
             defaultValue={defaultValues.date}
             required
-            className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+            className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
           />
         </label>
 
@@ -142,7 +142,7 @@ export function EditExpenseForm({
                       return next;
                     });
                   }}
-                  className="h-5 w-5 accent-lagoon-700"
+                  className="h-5 w-5 accent-sky-600"
                 />
                 {displayNames[id] ?? id}
               </label>
@@ -151,12 +151,12 @@ export function EditExpenseForm({
         </fieldset>
 
         {state.status === "error" && (
-          <p role="alert" className="rounded-md bg-danger-bg px-3 py-2.5 text-[14px] text-danger">
+          <p role="alert" className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2.5 text-[14px] text-danger">
             {state.message}
           </p>
         )}
         {state.status === "ok" && (
-          <p role="status" className="rounded-md bg-lagoon-50 px-3 py-2.5 text-[14px] text-action">
+          <p role="status" className="rounded-md border border-success/30 bg-success-bg px-3 py-2.5 text-[14px] text-success">
             Perubahan tersimpan.
           </p>
         )}
@@ -164,7 +164,7 @@ export function EditExpenseForm({
         <button
           type="submit"
           disabled={pending}
-          className="h-11 rounded-md bg-action px-4 text-[15px] font-semibold text-white disabled:opacity-60"
+          className="rpg-btn h-11 rounded-md bg-action px-4 text-[15px] font-semibold text-white disabled:opacity-60"
         >
           {pending ? "Menyimpan…" : "Simpan perubahan"}
         </button>

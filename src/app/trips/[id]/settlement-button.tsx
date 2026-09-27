@@ -34,12 +34,12 @@ export function SettlementButton({
         type="submit"
         disabled={pending}
         aria-label={label}
-        className="h-9 shrink-0 rounded-md border border-lagoon-600 px-3 text-[13px] font-semibold text-action transition-colors hover:bg-lagoon-50 disabled:opacity-60"
+        className="rpg-btn h-9 shrink-0 rounded-md border-2 border-action px-3 text-[13px] font-semibold text-action transition-colors hover:bg-sky-100 disabled:opacity-60"
       >
         {pending ? "Menyimpan…" : "Tandai lunas"}
       </button>
       {state.status === "error" && (
-        <p role="alert" className="text-[12px] leading-4 text-danger">
+        <p role="alert" className="rounded-md border border-danger/30 bg-danger-bg px-2 py-1 text-[12px] leading-4 text-danger">
           {state.message}
         </p>
       )}

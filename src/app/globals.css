@@ -1,83 +1,138 @@
 @import "tailwindcss";
 
 /* ============================================================
-   KemanaKita — Design Tokens
+   KemanaKita — Design Tokens (JRPG Bright)
    Sumber: docs/design_system.md §10
+   Tema: petualangan ala game RPG Jepang — ceria, hangat, terang.
+   Permukaan seperti kertas (parchment), aksen langit & emas.
    Aturan: komponen WAJIB pakai token di sini, bukan nilai lepas.
+
+   Catatan: nama token lama (lagoon/sunset/sand/slate) DIPERTAHANKAN
+   sebagai alias agar kelas lama tetap jalan, tapi nilainya kini
+   memakai palet baru. Nama kanonik baru: sky/gold/parch/ink.
    ============================================================ */
 
 :root {
-  /* ---- Lagoon (primary, teal laut) ---- */
-  --lagoon-50: #f0fdfa;
-  --lagoon-100: #ccfbf1;
-  --lagoon-200: #99f6e4;
-  --lagoon-300: #5eead4;
-  --lagoon-400: #2dd4bf;
-  --lagoon-500: #14b8a6;
-  --lagoon-600: #0d9488;
-  --lagoon-700: #0f766e;
-  --lagoon-800: #115e59;
-  --lagoon-900: #134e4a;
-  --lagoon-950: #042f2e;
+  /* ---- Sky (primary, biru langit anime) ---- */
+  --sky-50: #eff7ff;
+  --sky-100: #d9edff;
+  --sky-200: #bce0ff;
+  --sky-300: #8ccbff;
+  --sky-400: #55aeff;
+  --sky-500: #2b8fef;
+  --sky-600: #1668d6;
+  --sky-700: #1250a8;
+  --sky-800: #14428a;
+  --sky-900: #163a72;
+  --sky-950: #0e2549;
 
-  /* ---- Sunset (accent, amber) ---- */
-  --sunset-50: #fffbeb;
-  --sunset-100: #fef3c7;
-  --sunset-300: #fcd34d;
-  --sunset-500: #f59e0b;
-  --sunset-600: #d97706;
-  --sunset-700: #b45309;
+  /* ---- Gold (accent, emas hangat) ---- */
+  --gold-50: #fff9e8;
+  --gold-100: #fff0c4;
+  --gold-300: #ffd666;
+  --gold-500: #f5a524;
+  --gold-600: #d08305;
+  --gold-700: #a16207;
 
-  /* ---- Sand (permukaan hangat) ---- */
-  --sand-50: #fdfbf7;
-  --sand-100: #faf6ef;
-  --sand-200: #f2ebe0;
-  --sand-300: #e6dccc;
-  --sand-400: #cfc2ac;
-  --sand-500: #b0a088;
+  /* ---- Parchment (permukaan hangat, seperti kertas) ---- */
+  --parch-50: #fffcf4;
+  --parch-100: #fff6e6;
+  --parch-200: #fbeacf;
+  --parch-300: #f1dcb6;
+  --parch-400: #e0c493;
+  --parch-500: #c0a470;
 
-  /* ---- Slate (teks & garis) ---- */
-  --slate-900: #0f172a;
-  --slate-700: #334155;
-  --slate-600: #475569;
-  --slate-500: #64748b;
-  --slate-300: #cbd5e1;
-  --slate-100: #f1f5f9;
+  /* ---- Ink (teks & garis, navy tua) ---- */
+  --ink-900: #22304d;
+  --ink-700: #3b4b6e;
+  --ink-600: #5a6a8c;
+  --ink-500: #808ea8;
+  --ink-300: #c6cfe0;
+  --ink-100: #edf1f8;
+
+  /* ---- Coral (HP / bahaya) ---- */
+  --coral-500: #e5484d;
+  --coral-100: #ffe3e5;
+
+  /* ---- Mint (MP / sukses) ---- */
+  --mint-500: #0e9f6e;
+  --mint-100: #d6f6e9;
+
+  /* ---- Alias nama token lama → palet baru (kompatibilitas kelas) ---- */
+  --lagoon-50: var(--sky-50);
+  --lagoon-100: var(--sky-100);
+  --lagoon-200: var(--sky-200);
+  --lagoon-300: var(--sky-300);
+  --lagoon-400: var(--sky-400);
+  --lagoon-500: var(--sky-500);
+  --lagoon-600: var(--sky-600);
+  --lagoon-700: var(--sky-700);
+  --lagoon-800: var(--sky-800);
+  --lagoon-900: var(--sky-900);
+  --lagoon-950: var(--sky-950);
+
+  --sunset-50: var(--gold-50);
+  --sunset-100: var(--gold-100);
+  --sunset-300: var(--gold-300);
+  --sunset-500: var(--gold-500);
+  --sunset-600: var(--gold-600);
+  --sunset-700: var(--gold-700);
+
+  --sand-50: var(--parch-50);
+  --sand-100: var(--parch-100);
+  --sand-200: var(--parch-200);
+  --sand-300: var(--parch-300);
+  --sand-400: var(--parch-400);
+  --sand-500: var(--parch-500);
+
+  --slate-900: var(--ink-900);
+  --slate-700: var(--ink-700);
+  --slate-600: var(--ink-600);
+  --slate-500: var(--ink-500);
+  --slate-300: var(--ink-300);
+  --slate-100: var(--ink-100);
 
   /* ---- Semantik ---- */
-  --success: #15803d;
-  --success-bg: #dcfce7;
-  --danger: #b91c1c;
-  --danger-bg: #fee2e2;
-  --warning: #b45309;
-  --warning-bg: #fef3c7;
-  --info: #0369a1;
-  --info-bg: #e0f2fe;
+  --success: var(--mint-500);
+  --success-bg: var(--mint-100);
+  --danger: var(--coral-500);
+  --danger-bg: var(--coral-100);
+  --warning: var(--gold-700);
+  --warning-bg: var(--gold-100);
+  --info: var(--sky-600);
+  --info-bg: var(--sky-100);
 
   /* ---- Peran (tema terang, default) ---- */
-  --bg: var(--sand-50);
-  --surface: #ffffff;
-  --surface-2: var(--sand-100);
-  --fg: var(--slate-900);
-  --fg-muted: var(--slate-600);
-  --border: var(--sand-300);
-  --border-strong: var(--sand-400);
-  --accent: var(--sunset-500);
-  --action: var(--lagoon-700);
-  --action-hover: var(--lagoon-800);
+  --bg: var(--parch-50);
+  --surface: #fffefb;
+  --surface-2: var(--parch-100);
+  --fg: var(--ink-900);
+  --fg-muted: var(--ink-600);
+  --border: var(--parch-300);
+  --border-strong: var(--parch-400);
+  --accent: var(--gold-500);
+  --action: var(--sky-600);
+  --action-hover: var(--sky-700);
 
   /* ---- Radius ---- */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
   --radius-full: 9999px;
 
-  /* ---- Bayangan ---- */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 6px 16px rgba(13, 148, 136, 0.12);
-  --shadow-lg: 0 -8px 28px rgba(15, 23, 42, 0.16);
+  /* ---- Bayangan (bernuansa hangat + langit, bukan hitam pekat) ---- */
+  --shadow-xs: 0 1px 2px rgba(34, 48, 77, 0.08);
+  --shadow-sm: 0 2px 6px rgba(34, 48, 77, 0.1);
+  --shadow-md: 0 8px 20px rgba(22, 104, 214, 0.16);
+  --shadow-lg: 0 -10px 30px rgba(34, 48, 77, 0.2);
+  /* Panel "jendela game": tepi tebal + bayangan bertingkat */
+  --shadow-panel:
+    0 2px 0 rgba(34, 48, 77, 0.14),
+    0 10px 22px rgba(34, 48, 77, 0.12);
+  --shadow-panel-sky:
+    0 2px 0 rgba(14, 37, 73, 0.28),
+    0 12px 26px rgba(22, 104, 214, 0.28);
 
   /* ---- Gerak ---- */
   --motion-fast: 120ms;
@@ -87,56 +142,94 @@
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Tema gelap disiapkan untuk v1.1 (design_system §4.2).
-   Cukup tukar nilai peran; kelas komponen tidak berubah. */
+/* Tema gelap disiapkan untuk v1.1 (design_system §4.2). */
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #08110f;
-    --surface: #12201d;
-    --surface-2: #1a2c28;
-    --fg: #ecfdf5;
-    --fg-muted: #9db5ae;
-    --border: #25403a;
-    --border-strong: #2f4d45;
-    --action: var(--lagoon-400);
-    --action-hover: var(--lagoon-300);
+    --bg: #101a2e;
+    --surface: #17233d;
+    --surface-2: #1e2d4b;
+    --fg: #eaf1ff;
+    --fg-muted: #a3b3d0;
+    --border: #2c3d61;
+    --border-strong: #3b4f78;
+    --action: var(--sky-400);
+    --action-hover: var(--sky-300);
   }
 }
 
 @theme inline {
-  /* Palet → utilitas Tailwind (bg-lagoon-700, text-sunset-500, dst.) */
-  --color-lagoon-50: var(--lagoon-50);
-  --color-lagoon-100: var(--lagoon-100);
-  --color-lagoon-200: var(--lagoon-200);
-  --color-lagoon-300: var(--lagoon-300);
-  --color-lagoon-400: var(--lagoon-400);
-  --color-lagoon-500: var(--lagoon-500);
-  --color-lagoon-600: var(--lagoon-600);
-  --color-lagoon-700: var(--lagoon-700);
-  --color-lagoon-800: var(--lagoon-800);
-  --color-lagoon-900: var(--lagoon-900);
-  --color-lagoon-950: var(--lagoon-950);
+  /* Palet kanonik → utilitas Tailwind (bg-sky-600, text-gold-500, dst.) */
+  --color-sky-50: var(--sky-50);
+  --color-sky-100: var(--sky-100);
+  --color-sky-200: var(--sky-200);
+  --color-sky-300: var(--sky-300);
+  --color-sky-400: var(--sky-400);
+  --color-sky-500: var(--sky-500);
+  --color-sky-600: var(--sky-600);
+  --color-sky-700: var(--sky-700);
+  --color-sky-800: var(--sky-800);
+  --color-sky-900: var(--sky-900);
+  --color-sky-950: var(--sky-950);
 
-  --color-sunset-50: var(--sunset-50);
-  --color-sunset-100: var(--sunset-100);
-  --color-sunset-300: var(--sunset-300);
-  --color-sunset-500: var(--sunset-500);
-  --color-sunset-600: var(--sunset-600);
-  --color-sunset-700: var(--sunset-700);
+  --color-gold-50: var(--gold-50);
+  --color-gold-100: var(--gold-100);
+  --color-gold-300: var(--gold-300);
+  --color-gold-500: var(--gold-500);
+  --color-gold-600: var(--gold-600);
+  --color-gold-700: var(--gold-700);
 
-  --color-sand-50: var(--sand-50);
-  --color-sand-100: var(--sand-100);
-  --color-sand-200: var(--sand-200);
-  --color-sand-300: var(--sand-300);
-  --color-sand-400: var(--sand-400);
-  --color-sand-500: var(--sand-500);
+  --color-parch-50: var(--parch-50);
+  --color-parch-100: var(--parch-100);
+  --color-parch-200: var(--parch-200);
+  --color-parch-300: var(--parch-300);
+  --color-parch-400: var(--parch-400);
+  --color-parch-500: var(--parch-500);
 
-  --color-slate-100: var(--slate-100);
-  --color-slate-300: var(--slate-300);
-  --color-slate-500: var(--slate-500);
-  --color-slate-600: var(--slate-600);
-  --color-slate-700: var(--slate-700);
-  --color-slate-900: var(--slate-900);
+  --color-ink-100: var(--ink-100);
+  --color-ink-300: var(--ink-300);
+  --color-ink-500: var(--ink-500);
+  --color-ink-600: var(--ink-600);
+  --color-ink-700: var(--ink-700);
+  --color-ink-900: var(--ink-900);
+
+  --color-coral-500: var(--coral-500);
+  --color-coral-100: var(--coral-100);
+  --color-mint-500: var(--mint-500);
+  --color-mint-100: var(--mint-100);
+
+  /* Alias nama lama agar kelas lama tetap valid */
+  --color-lagoon-50: var(--sky-50);
+  --color-lagoon-100: var(--sky-100);
+  --color-lagoon-200: var(--sky-200);
+  --color-lagoon-300: var(--sky-300);
+  --color-lagoon-400: var(--sky-400);
+  --color-lagoon-500: var(--sky-500);
+  --color-lagoon-600: var(--sky-600);
+  --color-lagoon-700: var(--sky-700);
+  --color-lagoon-800: var(--sky-800);
+  --color-lagoon-900: var(--sky-900);
+  --color-lagoon-950: var(--sky-950);
+
+  --color-sunset-50: var(--gold-50);
+  --color-sunset-100: var(--gold-100);
+  --color-sunset-300: var(--gold-300);
+  --color-sunset-500: var(--gold-500);
+  --color-sunset-600: var(--gold-600);
+  --color-sunset-700: var(--gold-700);
+
+  --color-sand-50: var(--parch-50);
+  --color-sand-100: var(--parch-100);
+  --color-sand-200: var(--parch-200);
+  --color-sand-300: var(--parch-300);
+  --color-sand-400: var(--parch-400);
+  --color-sand-500: var(--parch-500);
+
+  --color-slate-100: var(--ink-100);
+  --color-slate-300: var(--ink-300);
+  --color-slate-500: var(--ink-500);
+  --color-slate-600: var(--ink-600);
+  --color-slate-700: var(--ink-700);
+  --color-slate-900: var(--ink-900);
 
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
@@ -160,27 +253,34 @@
   --color-action-hover: var(--action-hover);
 
   /* Tipografi (design_system §2) */
-  --font-display: var(--font-gabarito), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-rounded), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
   /* Radius & bayangan */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.06);
-  --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 6px 16px rgba(13, 148, 136, 0.12);
-  --shadow-lg: 0 -8px 28px rgba(15, 23, 42, 0.16);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+  --shadow-xs: 0 1px 2px rgba(34, 48, 77, 0.08);
+  --shadow-sm: 0 2px 6px rgba(34, 48, 77, 0.1);
+  --shadow-md: 0 8px 20px rgba(22, 104, 214, 0.16);
+  --shadow-lg: 0 -10px 30px rgba(34, 48, 77, 0.2);
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
   }
 
   body {
     background-color: var(--bg);
+    /* Langit lembut di atas + kertas hangat: suasana RPG cerah. */
+    background-image:
+      radial-gradient(120% 70% at 50% -10%, rgba(140, 203, 255, 0.55) 0%, rgba(140, 203, 255, 0) 60%),
+      radial-gradient(90% 50% at 90% 0%, rgba(255, 214, 102, 0.35) 0%, rgba(255, 214, 102, 0) 55%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: var(--fg);
     font-family: var(--font-sans);
     font-size: 15px;
@@ -189,7 +289,7 @@
 
   /* Fokus terlihat (design_system §11) */
   :focus-visible {
-    outline: 2px solid var(--lagoon-600);
+    outline: 3px solid var(--sky-500);
     outline-offset: 2px;
   }
 
@@ -207,5 +307,84 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+/* ============================================================
+   Komponen dekoratif ala RPG (CSS murni, tanpa dependency baru)
+   ============================================================ */
+@layer components {
+  /* Jendela/panel game: permukaan kertas, tepi tebal, bayangan bertingkat. */
+  .rpg-panel {
+    background-color: var(--surface);
+    border: 2px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-panel);
+  }
+
+  /* Panel dengan header langit bergradasi (kartu quest). */
+  .rpg-panel-sky {
+    background: linear-gradient(180deg, var(--sky-400) 0%, var(--sky-600) 100%);
+    border: 2px solid var(--sky-800);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-panel-sky);
+    color: #fff;
+  }
+
+  /* Pita/ribbon kecil untuk judul seksi. */
+  .rpg-ribbon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(180deg, var(--gold-300), var(--gold-500));
+    border: 2px solid var(--gold-600);
+    color: var(--ink-900);
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Tombol utama bergaya tombol game: tepi bawah tebal + efek tekan. */
+  .rpg-btn {
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    transition:
+      transform var(--motion-fast) var(--ease-standard),
+      filter var(--motion-fast) var(--ease-standard),
+      box-shadow var(--motion-fast) var(--ease-standard);
+  }
+
+  .rpg-btn:active {
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+
+  /* Aksen sudut dekoratif pada panel (opsional, hemat). */
+  .rpg-corner::before,
+  .rpg-corner::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--gold-500);
+    opacity: 0.9;
+  }
+
+  .rpg-corner::before {
+    top: 6px;
+    left: 6px;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .rpg-corner::after {
+    bottom: 6px;
+    right: 6px;
+    border-left: none;
+    border-top: none;
   }
 }

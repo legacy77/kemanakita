@@ -54,24 +54,25 @@ export function TripsPageClient({
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-6 pb-16">
       <header className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[12px] font-medium tracking-[0.01em] text-slate-500">
+          <span className="rpg-ribbon mb-1">🧭 Party Kamu</span>
+          <p className="text-[12px] font-medium tracking-[0.01em] text-ink-500">
             Halo, {name === "" ? "teman jalan" : name}! 👋
           </p>
-          <h1 className="font-display truncate text-[26px] leading-8 font-bold text-fg">
+          <h1 className="font-display truncate text-[26px] leading-8 font-extrabold text-action">
             Trip kamu
           </h1>
         </div>
         <button
           type="button"
           onClick={() => void signOut()}
-          className="flex h-11 shrink-0 items-center rounded-md border border-border px-3 text-[14px] font-semibold text-slate-700"
+          className="rpg-btn flex h-11 shrink-0 items-center rounded-md border-2 border-border-strong px-3 text-[14px] font-semibold text-slate-700"
         >
           Keluar
         </button>
       </header>
 
       {trips.length === 0 ? (
-        <section className="flex flex-col items-center gap-3 rounded-lg border border-border bg-surface px-4 py-12 text-center shadow-sm">
+        <section className="rpg-panel flex flex-col items-center gap-3 px-4 py-12 text-center">
           <p aria-hidden className="text-[40px] leading-none">
             🧳
           </p>
@@ -85,10 +86,7 @@ export function TripsPageClient({
       ) : (
         <ul className="flex flex-col gap-3">
           {trips.map((trip) => (
-            <li
-              key={trip.id}
-              className="rounded-lg border border-border bg-surface p-4 shadow-sm"
-            >
+            <li key={trip.id} className="rpg-panel p-4">
               <div className="flex items-start justify-between gap-3">
                 <Link href={`/trips/${trip.id}`} className="min-w-0 flex-1">
                   <h2 className="font-display truncate text-[20px] leading-[26px] font-semibold text-fg">
@@ -113,14 +111,14 @@ export function TripsPageClient({
               <div className="mt-3 flex items-center gap-2">
                 <Link
                   href={`/trips/${trip.id}`}
-                  className="flex h-11 flex-1 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+                  className="rpg-btn flex h-11 flex-1 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
                 >
                   Buka trip
                 </Link>
                 <button
                   type="button"
                   onClick={() => copyInvite(trip.inviteCode)}
-                  className="flex h-11 shrink-0 items-center gap-1 rounded-md border border-lagoon-600 px-3 text-[14px] font-semibold text-action"
+                  className="rpg-btn flex h-11 shrink-0 items-center gap-1 rounded-md border-2 border-sky-600 px-3 text-[14px] font-bold text-action"
                   aria-label={`Salin tautan undangan ${trip.title}`}
                 >
                   {copied === trip.inviteCode ? "✅ Tersalin!" : "🔗 Undang"}
@@ -131,7 +129,7 @@ export function TripsPageClient({
         </ul>
       )}
 
-      <section className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+      <section className="rpg-panel p-4">
         {formOpen ? (
           <form action={action} className="flex flex-col gap-3">
             <h2 className="font-display text-[20px] leading-[26px] font-semibold text-fg">
@@ -145,7 +143,7 @@ export function TripsPageClient({
                 required
                 maxLength={120}
                 placeholder="Misalnya: Bali 3D2N"
-                className="h-12 rounded-md border border-border bg-surface px-3.5 text-[16px] font-normal outline-none placeholder:text-sand-500 focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+                className="h-12 rounded-md border-2 border-border-strong bg-surface px-3.5 text-[16px] font-normal outline-none placeholder:text-parch-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
               />
             </label>
             <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-fg">
@@ -155,7 +153,7 @@ export function TripsPageClient({
                 type="text"
                 maxLength={120}
                 placeholder="Misalnya: Bali"
-                className="h-12 rounded-md border border-border bg-surface px-3.5 text-[16px] font-normal outline-none placeholder:text-sand-500 focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+                className="h-12 rounded-md border-2 border-border-strong bg-surface px-3.5 text-[16px] font-normal outline-none placeholder:text-parch-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
               />
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -165,7 +163,7 @@ export function TripsPageClient({
                   name="startDate"
                   type="date"
                   required
-                  className="h-12 rounded-md border border-border bg-surface px-3.5 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+                  className="h-12 rounded-md border border-border bg-surface px-3.5 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
                 />
               </label>
               <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-fg">
@@ -174,7 +172,7 @@ export function TripsPageClient({
                   name="endDate"
                   type="date"
                   required
-                  className="h-12 rounded-md border border-border bg-surface px-3.5 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+                  className="h-12 rounded-md border border-border bg-surface px-3.5 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
                 />
               </label>
             </div>
@@ -188,14 +186,14 @@ export function TripsPageClient({
               <button
                 type="button"
                 onClick={() => setFormOpen(false)}
-                className="flex h-12 flex-1 items-center justify-center rounded-md border border-border px-4 text-[15px] font-semibold text-slate-700"
+                className="rpg-btn flex h-12 flex-1 items-center justify-center rounded-md border-2 border-border-strong px-4 text-[15px] font-semibold text-slate-700"
               >
                 Batal
               </button>
               <button
                 type="submit"
                 disabled={pending}
-                className="flex h-12 flex-1 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover disabled:cursor-wait disabled:opacity-60"
+                className="rpg-btn flex h-12 flex-1 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover disabled:cursor-wait disabled:opacity-60"
               >
                 {pending ? "Membuat…" : "Bikin trip"}
               </button>
@@ -205,7 +203,7 @@ export function TripsPageClient({
           <button
             type="button"
             onClick={() => setFormOpen(true)}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+            className="rpg-btn flex h-12 w-full items-center justify-center gap-2 rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
           >
             <span aria-hidden>➕</span> Bikin trip baru
           </button>

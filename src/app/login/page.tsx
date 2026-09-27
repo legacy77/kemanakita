@@ -30,7 +30,10 @@ export default async function LoginPage({
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-12">
       <div className="w-full max-w-sm space-y-2 text-center">
-        <h1 className="font-display text-[26px] leading-8 font-bold text-fg">Masuk</h1>
+        <span className="rpg-ribbon mx-auto">🔑 Gerbang Masuk</span>
+        <h1 className="font-display text-[28px] leading-9 font-extrabold text-action">
+          Masuk
+        </h1>
         <p className="text-[15px] leading-[22px] text-fg-muted">
           Daftar sekali dengan nama + email, dapat PIN 6 digit. Masuk berikutnya cukup email +
           PIN. Tanpa buka email.

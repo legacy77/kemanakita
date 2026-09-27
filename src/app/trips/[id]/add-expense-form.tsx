@@ -24,8 +24,8 @@ export function AddExpenseForm({
   const [selected, setSelected] = useState<Set<string>>(new Set(memberIds));
 
   return (
-    <details className="rounded-lg border border-border bg-surface shadow-sm">
-      <summary className="cursor-pointer list-none px-4 py-3 text-[15px] font-semibold text-action">
+    <details className="rpg-panel">
+      <summary className="cursor-pointer list-none px-4 py-3 font-display text-[15px] font-bold text-gold-700">
         + Catat pengeluaran
       </summary>
       <form action={action} className="flex flex-col gap-3 border-t border-border p-4">
@@ -33,7 +33,7 @@ export function AddExpenseForm({
 
         <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-fg">
           Untuk apa
-          <input name="title" required maxLength={160} placeholder="Makan siang" className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20" />
+          <input name="title" required maxLength={160} placeholder="Makan siang" className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25" />
         </label>
 
         <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-fg">
@@ -48,14 +48,14 @@ export function AddExpenseForm({
               const parsed = parseRupiahInput(e.target.value);
               setAmountText(parsed === null ? e.target.value : formatRupiahInput(parsed));
             }}
-            className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+            className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
           />
         </label>
 
         <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-fg">
             Dibayar oleh
-            <select name="paidBy" defaultValue={currentUserId} className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20">
+            <select name="paidBy" defaultValue={currentUserId} className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25">
               {memberIds.map((id) => (
                 <option key={id} value={id}>
                   {displayNames[id] ?? id}
@@ -65,7 +65,7 @@ export function AddExpenseForm({
           </label>
           <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-fg">
             Kategori
-            <select name="category" defaultValue={EXPENSE_CATEGORIES[0].key} className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20">
+            <select name="category" defaultValue={EXPENSE_CATEGORIES[0].key} className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25">
               {EXPENSE_CATEGORIES.map((c) => (
                 <option key={c.key} value={c.key}>
                   {c.label}
@@ -77,7 +77,7 @@ export function AddExpenseForm({
 
         <label className="flex flex-col gap-1.5 text-[13px] font-semibold text-fg">
           Tanggal
-          <input name="date" type="date" defaultValue={tripDate} required className="h-11 rounded-md border border-border bg-surface px-3 text-[16px] font-normal outline-none focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20" />
+          <input name="date" type="date" defaultValue={tripDate} required className="h-11 rounded-md border-2 border-border-strong bg-surface px-3 text-[16px] font-normal outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25" />
         </label>
 
         <fieldset className="flex flex-col gap-1.5">
@@ -98,7 +98,7 @@ export function AddExpenseForm({
                       return next;
                     });
                   }}
-                  className="h-5 w-5 accent-lagoon-700"
+                  className="h-5 w-5 accent-sky-600"
                 />
                 {displayNames[id] ?? id}
               </label>
@@ -106,10 +106,10 @@ export function AddExpenseForm({
           </div>
         </fieldset>
 
-        {state.status === "error" && <p role="alert" className="rounded-md bg-danger-bg px-3 py-2.5 text-[14px] text-danger">{state.message}</p>}
-        {state.status === "ok" && <p role="status" className="rounded-md bg-lagoon-50 px-3 py-2.5 text-[14px] text-action">Pengeluaran tersimpan.</p>}
+        {state.status === "error" && <p role="alert" className="rounded-md border border-danger/30 bg-danger-bg px-3 py-2.5 text-[14px] text-danger">{state.message}</p>}
+        {state.status === "ok" && <p role="status" className="rounded-md border border-success/30 bg-success-bg px-3 py-2.5 text-[14px] text-success">Pengeluaran tersimpan.</p>}
 
-        <button type="submit" disabled={pending} className="h-11 rounded-md bg-action px-4 text-[15px] font-semibold text-white disabled:opacity-60">
+        <button type="submit" disabled={pending} className="rpg-btn h-11 rounded-md bg-action px-4 text-[15px] font-semibold text-white disabled:opacity-60">
           {pending ? "Menyimpan…" : "Simpan pengeluaran"}
         </button>
       </form>

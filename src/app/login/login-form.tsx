@@ -12,11 +12,12 @@ const initialState: LoginState = { status: "idle" };
 
 // Kelas input dipakai bersama agar styling konsisten (design_system §8.2:
 // tinggi 48px & font 16px supaya iOS tidak auto-zoom saat fokus).
+// Gaya RPG: border tebal 2px, permukaan kertas, fokus ring biru langit.
 const INPUT_CLASS =
-  "h-12 rounded-md border border-border bg-surface px-3.5 text-[16px] font-normal text-fg outline-none placeholder:text-sand-500 focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20";
-const LABEL_CLASS = "flex flex-col gap-1.5 text-[13px] font-semibold text-fg";
+  "h-12 rounded-md border-2 border-border-strong bg-surface px-3.5 text-[16px] font-normal text-fg outline-none placeholder:text-parch-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25";
+const LABEL_CLASS = "flex flex-col gap-1.5 text-[13px] font-bold text-fg";
 const BUTTON_CLASS =
-  "h-12 rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover disabled:cursor-wait disabled:opacity-60";
+  "rpg-btn h-12 rounded-md bg-action px-4 text-[15px] font-bold text-white shadow-md hover:bg-action-hover disabled:cursor-wait disabled:opacity-60";
 
 type Tab = "masuk" | "daftar";
 
@@ -54,11 +55,11 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
   const state = tab === "masuk" ? loginState : registerState;
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-4">
+    <div className="rpg-panel flex w-full max-w-sm flex-col gap-4 p-4">
       <div
         role="tablist"
         aria-label="Pilih masuk atau daftar"
-        className="grid grid-cols-2 gap-1 rounded-md bg-sand-100 p-1"
+        className="grid grid-cols-2 gap-1 rounded-md border-2 border-border-strong bg-parch-200 p-1"
       >
         {(["masuk", "daftar"] as const).map((key) => (
           <button
@@ -68,11 +69,13 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
             aria-selected={tab === key}
             onClick={() => setTab(key)}
             className={
-              "h-10 rounded-[6px] text-[14px] font-semibold transition-colors " +
-              (tab === key ? "bg-surface text-fg shadow-sm" : "text-fg-muted hover:text-fg")
+              "h-10 rounded-[8px] text-[14px] font-bold transition-colors " +
+              (tab === key
+                ? "bg-action text-white shadow-sm"
+                : "text-ink-600 hover:text-ink-900")
             }
           >
-            {key === "masuk" ? "Masuk" : "Daftar"}
+            {key === "masuk" ? "🔑 Masuk" : "✨ Daftar"}
           </button>
         ))}
       </div>
@@ -111,7 +114,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
           </label>
 
           <button type="submit" disabled={pending} className={BUTTON_CLASS}>
-            {pending ? "Masuk…" : "Masuk"}
+            {pending ? "Masuk…" : "▶ Masuk"}
           </button>
 
           <p className="text-center text-[13px] text-fg-muted">
@@ -147,7 +150,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
           </label>
 
           <button type="submit" disabled={pending} className={BUTTON_CLASS}>
-            {pending ? "Membuat akun…" : "Daftar & dapat PIN"}
+            {pending ? "Membuat akun…" : "✨ Daftar & dapat PIN"}
           </button>
 
           <p className="text-center text-[13px] text-fg-muted">
@@ -159,7 +162,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
       {tab === "masuk" && initialError && state.status === "idle" && (
         <p
           role="alert"
-          className="flex items-start gap-2 rounded-md bg-danger-bg px-3 py-3 text-[14px] text-danger"
+          className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger-bg px-3 py-3 text-[14px] text-danger"
         >
           <span aria-hidden>⚠️</span>
           {initialError}
@@ -169,7 +172,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
       {state.status === "error" && (
         <p
           role="alert"
-          className="flex items-start gap-2 rounded-md bg-danger-bg px-3 py-3 text-[14px] text-danger"
+          className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger-bg px-3 py-3 text-[14px] text-danger"
         >
           <span aria-hidden>⚠️</span>
           {state.message}
@@ -192,35 +195,40 @@ function PinCreated({
   onGoToLogin: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [copyFailed, setCopyFailed] = useState(false);
 
   async function copy() {
     try {
       await navigator.clipboard.writeText(pin);
       setCopied(true);
+      setCopyFailed(false);
     } catch {
       setCopied(false);
+      setCopyFailed(true);
     }
   }
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-4">
-      <div className="rounded-md border border-border bg-surface p-4 text-center">
-        <p className="text-[13px] font-semibold text-fg-muted">PIN kamu</p>
-        <p className="mt-1 font-display text-[34px] leading-tight font-bold tracking-[0.2em] text-fg">
+    <div className="rpg-panel flex w-full max-w-sm flex-col gap-4 p-4">
+      <div className="rpg-panel-sky relative rounded-lg p-4 text-center">
+        <p className="text-[12px] font-bold tracking-[0.08em] text-white/90 uppercase">
+          🎁 PIN Kamu
+        </p>
+        <p className="mt-1 font-display text-[38px] leading-tight font-extrabold tracking-[0.22em] text-white drop-shadow-[0_2px_0_rgba(14,37,73,0.35)]">
           {pin}
         </p>
         <button
           type="button"
           onClick={copy}
-          className="mt-3 h-12 w-full rounded-md border border-border bg-surface px-4 text-[15px] font-semibold text-action transition-colors hover:bg-sand-100"
+          className="rpg-btn mt-3 h-12 w-full rounded-md border-2 border-white/70 bg-white/15 px-4 text-[15px] font-bold text-white hover:bg-white/25"
         >
-          {copied ? "Tersalin ✓" : "Salin PIN"}
+          {copied ? "✓ Tersalin" : "📋 Salin PIN"}
         </button>
       </div>
 
       <p
         role="alert"
-        className="flex items-start gap-2 rounded-md bg-danger-bg px-3 py-3 text-[14px] text-danger"
+        className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger-bg px-3 py-3 text-[14px] text-danger"
       >
         <span aria-hidden>⚠️</span>
         <span>
@@ -229,12 +237,18 @@ function PinCreated({
         </span>
       </p>
 
+      {copyFailed && (
+        <p className="text-center text-[12px] leading-4 text-fg-muted">
+          Gagal menyalin otomatis — tekan lama PIN di atas buat menyalin manual.
+        </p>
+      )}
+
       <Link
         href={`/login?next=${encodeURIComponent(next)}`}
         onClick={onGoToLogin}
-        className="flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+        className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-bold text-white shadow-md hover:bg-action-hover"
       >
-        Langsung masuk
+        ▶ Langsung masuk
       </Link>
 
       <p className="text-center text-[13px] text-fg-muted">

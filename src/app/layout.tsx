@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Gabarito, Plus_Jakarta_Sans } from "next/font/google";
+import { M_PLUS_Rounded_1c, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-// Display / heading — design_system §2.1
-const gabarito = Gabarito({
-  variable: "--font-gabarito",
+// Display / heading — font membulat yang ramah, nuansa game RPG (design_system §2.1)
+const rounded = M_PLUS_Rounded_1c({
+  variable: "--font-rounded",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["500", "700", "800"],
   display: "swap",
 });
 
@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${gabarito.variable} ${plusJakarta.variable} h-full antialiased`}
+      className={`${rounded.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

@@ -183,15 +183,18 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-4 py-6 pb-16">
-      <header className="flex flex-col gap-1">
+      <header className="rpg-panel-sky relative flex flex-col gap-1 rounded-lg p-4">
         <Link
           href="/trips"
-          className="text-[14px] font-semibold text-action underline underline-offset-4"
+          className="w-fit text-[14px] font-semibold text-white/90 underline underline-offset-4"
         >
           ← Semua trip
         </Link>
-        <h1 className="font-display text-[26px] leading-8 font-bold text-fg">{trip.title}</h1>
-        <p className="flex items-center gap-1 text-[14px] leading-5 text-fg-muted">
+        <span className="rpg-ribbon mt-1 w-fit">🗺️ Quest Trip</span>
+        <h1 className="font-display text-[26px] leading-8 font-extrabold text-white drop-shadow-[0_2px_0_rgba(14,37,73,0.35)]">
+          {trip.title}
+        </h1>
+        <p className="flex items-center gap-1 text-[14px] leading-5 text-white/90">
           <span aria-hidden>📍</span>
           <span>
             {trip.destination === null || trip.destination === ""
@@ -200,12 +203,12 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
             · {formatTripDate(trip.start_date)} – {formatTripDate(trip.end_date)}
           </span>
         </p>
-        <p className="text-[13px] leading-5 text-slate-500">
+        <p className="text-[13px] leading-5 text-white/80">
           {tripDayCount} hari · {memberCount} anggota · Total {formatRupiah(tripTotal)}
         </p>
         <Link
           href={inviteUrl}
-          className="mt-1 inline-flex h-11 w-fit items-center gap-1 rounded-md border border-lagoon-600 px-3 text-[14px] font-semibold text-action"
+          className="rpg-btn mt-1 inline-flex h-11 w-fit items-center gap-1 rounded-md border-2 border-white/70 bg-white/15 px-3 text-[14px] font-bold text-white hover:bg-white/25"
         >
           🔗 Undang teman
         </Link>
@@ -216,10 +219,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
       {tab === "itinerary" && (
         <section className="flex flex-col gap-4">
           {days.map((day) => (
-            <article
-              key={day.date}
-              className="rounded-lg border border-border bg-surface p-4 shadow-sm"
-            >
+            <article key={day.date} className="rpg-panel p-4">
               <h2 className="font-display text-[17px] leading-[22px] font-semibold text-fg">
                 {formatDayLabel(day.date)}
               </h2>
@@ -278,7 +278,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
 
       {tab === "keuangan" && (
         <section className="flex flex-col gap-4">
-          <article className="rounded-lg border border-border bg-surface p-4 shadow-sm">
+          <article className="rpg-panel p-4">
             <h2 className="font-display text-[17px] leading-[22px] font-semibold text-fg">
               Ringkasan
             </h2>
@@ -330,13 +330,13 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
           </article>
 
           {regularExpenses.length === 0 && settlementRows.length === 0 ? (
-            <p className="rounded-lg border border-border bg-surface px-4 py-8 text-center text-[15px] text-fg-muted">
+            <p className="rpg-panel px-4 py-8 text-center text-[15px] text-fg-muted">
               Belum ada pengeluaran. Catat yang pertama di bawah ya.
             </p>
           ) : (
             <>
               {regularExpenses.length === 0 ? (
-                <p className="rounded-lg border border-border bg-surface px-4 py-8 text-center text-[15px] text-fg-muted">
+                <p className="rpg-panel px-4 py-8 text-center text-[15px] text-fg-muted">
                   Semua pengeluaran sudah masuk daftar pelunasan di bawah.
                 </p>
               ) : (
@@ -345,10 +345,10 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
                     const category = CATEGORY_BY_KEY.get(expense.category);
                     const splits = splitsByExpense.get(expense.id) ?? [];
                     return (
-                      <li
-                        key={expense.id}
-                        className="rounded-lg border border-border bg-surface p-4 shadow-sm"
-                      >
+                        <li
+                          key={expense.id}
+                          className="rpg-panel p-4"
+                        >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <p className="text-[15px] leading-[21px] font-semibold text-fg">
@@ -392,7 +392,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
               )}
 
               {settlementRows.length > 0 && (
-                <details className="rounded-lg border border-border bg-surface shadow-sm">
+                <details className="rpg-panel">
                   <summary className="cursor-pointer list-none px-4 py-3 text-[15px] font-semibold text-action">
                     ✅ Sudah diselesaikan ({settlementRows.length})
                   </summary>
@@ -437,7 +437,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
       )}
 
       {tab === "anggota" && (
-        <section className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-4 shadow-sm">
+        <section className="rpg-panel flex flex-col gap-3 p-4">
           <h2 className="font-display text-[17px] leading-[22px] font-semibold text-fg">
             Anggota ({memberCount})
           </h2>
@@ -476,7 +476,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
           </ul>
           <Link
             href={inviteUrl}
-            className="flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+            className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-bold text-white transition-colors hover:bg-action-hover"
           >
             🔗 Undang teman
           </Link>

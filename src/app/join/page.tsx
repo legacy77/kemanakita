@@ -45,7 +45,7 @@ export default async function JoinPage({
             </p>
             <Link
               href={`/login?next=${encodeURIComponent("/join")}`}
-              className="flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+              className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
             >
               Masuk dulu
             </Link>
@@ -71,13 +71,13 @@ export default async function JoinPage({
         <div className="flex flex-col gap-2">
           <Link
             href="/join"
-            className="flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+            className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
           >
             Masukkan kode manual
           </Link>
           <Link
             href="/trips"
-            className="flex h-12 items-center justify-center rounded-md border border-border px-4 text-[15px] font-semibold text-slate-700"
+            className="flex h-12 items-center justify-center rounded-md border-2 border-border-strong bg-surface px-4 text-[15px] font-semibold text-ink-700"
           >
             Ke trip saya
           </Link>
@@ -104,7 +104,7 @@ export default async function JoinPage({
         </p>
         <Link
           href="/join"
-          className="flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+          className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
         >
           Coba kode lain
         </Link>
@@ -144,7 +144,7 @@ export default async function JoinPage({
           </p>
           <Link
             href={`/login?next=${encodeURIComponent(`/join?code=${code}`)}`}
-            className="flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+            className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
           >
             Masuk buat gabung
           </Link>
@@ -156,8 +156,8 @@ export default async function JoinPage({
 
 function Shell({ children }: { children: ReactNode }) {
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-4 px-4 py-12">
-      {children}
+    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-12">
+      <div className="rpg-panel flex flex-col gap-4 p-5">{children}</div>
     </main>
   );
 }

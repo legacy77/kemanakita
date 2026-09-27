@@ -1,9 +1,15 @@
 # Design System — KemanaKita
 
-**Versi:** 1.0
-**Tanggal:** 26 September 2026
+**Versi:** 2.0 (tema "JRPG Bright")
+**Tanggal:** 27 September 2026
 **Status:** Acuan implementasi UI
 **Rujukan:** `docs/PRD.md`
+
+> **Perubahan v2.0:** tema berganti dari "Coastal Notebook" (teal/sand) ke
+> **"JRPG Bright"** — nuansa game petualangan RPG Jepang yang ceria dan terang.
+> Nama token lama (`lagoon`/`sunset`/`sand`/`slate`) **dipertahankan sebagai alias**
+> agar kelas lama tetap jalan; nama kanonik baru adalah `sky`/`gold`/`parch`/`ink`.
+> Font display berganti dari Gabarito ke **M PLUS Rounded 1c**.
 
 ---
 
@@ -11,21 +17,22 @@
 
 ### 1.1 Konsep
 
-**"Coastal Notebook"** — nuansa buku catatan perjalanan pesisir: hangat, bersih,
-dan ramah, tapi tetap rapi saat menampilkan angka uang.
+**"JRPG Bright"** — nuansa game petualangan RPG Jepang: ceria, hangat, dan terang,
+seperti layar judul game saat matahari pagi menyinari peta dunia.
 
-Terinspirasi dari laut (teal) dan matahari terbenam (amber) tanpa jatuh ke
-gradasi ungu-biru yang generik. Permukaan memakai **off-white hangat (sand)**
-alih-alih putih murni, sehingga terasa seperti kertas dan mengurangi kelelahan
-mata saat dipakai lama di HP.
+Permukaan memakai **kertas hangat (parchment)** alih-alih putih murni, dengan
+aksen **biru langit anime (sky)** sebagai warna aksi dan **emas hangat (gold)**
+sebagai pita/badge. Panel berbentuk **"jendela game"** — tepi tebal 2px dengan
+bayangan bertingkat — sehingga terasa seperti menu di dalam game. Tetap rapi saat
+menampilkan angka uang.
 
 ### 1.2 Prinsip
 
 1. **Mobile dulu, 360px adalah kanvas utama.** Desktop adalah bonus.
 2. **Angka uang adalah bintang.** Nominal harus paling mudah dibaca di layar.
-3. **Tenang, bukan ramai.** Satu aksi utama per layar, aksen amber dipakai hemat.
+3. **Ceria tapi teratur.** Satu aksi utama per layar; aksen emas dipakai hemat.
 4. **Sekali lihat, paham.** Status utang/lunas harus terbaca tanpa berpikir.
-5. **Sentuhan ramah.** Sudut membulat, ikon ramah, bahasa santai.
+5. **Sentuhan ramah.** Sudut membulat, panel "jendela game", bahasa santai.
 
 ### 1.3 Anti-pola (Dilarang)
 
@@ -45,14 +52,15 @@ mata saat dipakai lama di HP.
 
 | Peran | Font | Pemakaian |
 |-------|------|-----------|
-| **Display / Heading** | **Gabarito** (500/600/700) | Judul halaman, judul kartu, angka besar |
+| **Display / Heading** | **M PLUS Rounded 1c** (500/700/800) | Judul halaman, judul kartu, angka besar |
 | **Body / UI** | **Plus Jakarta Sans** (400/500/600/700) | Paragraf, label, tombol, input |
 | **Angka Uang** | Plus Jakarta Sans + `font-variant-numeric: tabular-nums` | Nominal, saldo, tanggal |
 | Fallback mono | IBM Plex Mono (400/500) | Hanya jika `tabular-nums` tidak didukung |
 
-> Alasan: Gabarito memberi karakter bulat-geometris yang ramah dan tidak
-> generik; Plus Jakarta Sans menjaga keterbacaan teks panjang dan asal
-> Indonesia. Angka uang wajib **tabular** agar kolom nominal tidak goyang.
+> Alasan: M PLUS Rounded 1c adalah font membulat khas UI game Jepang — memberi
+> karakter "game" yang ramah tanpa mengorbankan keterbacaan; Plus Jakarta Sans
+> menjaga keterbacaan teks panjang dan asal Indonesia. Angka uang wajib
+> **tabular** agar kolom nominal tidak goyang.
 
 ### 2.2 Skala Tipe
 
@@ -75,7 +83,7 @@ Di layar ≥1024px, `body` naik ke 16/24.
 
 ### 2.3 Contoh Penerapan
 
-- Judul trip → `display` (Gabarito 700)
+- Judul trip → `display` (M PLUS Rounded 1c 800)
 - "Total kamu bayar" → `overline` + `amount-lg`
 - Nama anggota → `body-strong`
 - "Rp 1.250.000" → `amount` dengan `tabular-nums`
@@ -86,99 +94,104 @@ Di layar ≥1024px, `body` naik ke 16/24.
 
 ### 3.1 Palet Inti
 
-**Lagoon (primary — teal laut)**
+> Nama kanonik kini: **sky** (primary — biru langit anime), **gold** (accent —
+> emas hangat), **parch** (permukaan kertas hangat), **ink** (teks navy).
+> Nama lama `lagoon`/`sunset`/`sand`/`slate` **tetap tersedia sebagai alias**
+> dan memetakan ke nilai di bawah, jadi kelas lama (`bg-lagoon-700`,
+> `text-slate-500`, `bg-sand-100`, dst.) tetap valid.
+
+**Sky (primary — biru langit anime)**
 
 | Token | Hex | Pemakaian |
 |-------|-----|-----------|
-| `lagoon-50` | `#F0FDFA` | Latar chip lembut |
-| `lagoon-100` | `#CCFBF1` | Latar badge, hover lembut |
-| `lagoon-200` | `#99F6E4` | Border aksen |
-| `lagoon-300` | `#5EEAD4` | Ikon di latar gelap |
-| `lagoon-400` | `#2DD4BF` | Aksen gelap, grafik |
-| `lagoon-500` | `#14B8A6` | Hover tombol |
-| `lagoon-600` | `#0D9488` | **Warna merek** (isi tombol, ikon) |
-| `lagoon-700` | `#0F766E` | **Teks/aksi utama** (aman kontras) |
-| `lagoon-800` | `#115E59` | Tekanan tombol (pressed) |
-| `lagoon-900` | `#134E4A` | Heading di tema gelap |
-| `lagoon-950` | `#042F2E` | Latar tema gelap |
+| `sky-50` | `#EFF7FF` | Latar chip lembut |
+| `sky-100` | `#D9EDFF` | Latar badge, hover lembut |
+| `sky-200` | `#BCE0FF` | Border aksen |
+| `sky-300` | `#8CCBFF` | Ikon di latar gelap |
+| `sky-400` | `#55AEFF` | Aksen gelap, grafik |
+| `sky-500` | `#2B8FEF` | Hover tombol, fokus |
+| `sky-600` | `#1668D6` | **Warna merek** (isi tombol, ikon) |
+| `sky-700` | `#1250A8` | **Teks/aksi utama** (aman kontras) |
+| `sky-800` | `#14428A` | Tekanan tombol (pressed) |
+| `sky-900` | `#163A72` | Heading di tema gelap |
+| `sky-950` | `#0E2549` | Latar tema gelap |
 
-**Sunset (accent — amber)**
-
-| Token | Hex | Pemakaian |
-|-------|-----|-----------|
-| `sunset-50` | `#FFFBEB` | Latar sorotan |
-| `sunset-100` | `#FEF3C7` | Chip "belum lunas" |
-| `sunset-300` | `#FCD34D` | Grafik, highlight |
-| `sunset-500` | `#F59E0B` | **Aksen merek** (badge, tombol sekunder penting) |
-| `sunset-600` | `#D97706` | Teks aksen di latar terang |
-| `sunset-700` | `#B45309` | Teks peringatan |
-
-**Sand (permukaan hangat)**
+**Gold (accent — emas hangat)**
 
 | Token | Hex | Pemakaian |
 |-------|-----|-----------|
-| `sand-50` | `#FDFBF7` | Latar halaman |
-| `sand-100` | `#FAF6EF` | Kartu di atas halaman |
-| `sand-200` | `#F2EBE0` | Kartu sekunder, input |
-| `sand-300` | `#E6DCCC` | Border halus |
-| `sand-400` | `#CFC2AC` | Border kuat, garis pemisah |
-| `sand-500` | `#B0A088` | Placeholder, ikon nonaktif |
+| `gold-50` | `#FFF9E8` | Latar sorotan |
+| `gold-100` | `#FFF0C4` | Chip "belum lunas" |
+| `gold-300` | `#FFD666` | Grafik, highlight |
+| `gold-500` | `#F5A524` | **Aksen merek** (pita, badge) |
+| `gold-600` | `#D08305` | Teks aksen di latar terang |
+| `gold-700` | `#A16207` | Teks peringatan |
 
-**Slate (teks & garis)**
+**Parchment (permukaan kertas hangat)**
 
 | Token | Hex | Pemakaian |
 |-------|-----|-----------|
-| `slate-900` | `#0F172A` | Teks utama |
-| `slate-700` | `#334155` | Teks sekunder kuat |
-| `slate-600` | `#475569` | Teks sekunder |
-| `slate-500` | `#64748B` | Metadata, ikon |
-| `slate-300` | `#CBD5E1` | Garis pemisah |
-| `slate-100` | `#F1F5F9` | Latar netral |
+| `parch-50` | `#FFFCF4` | Latar halaman |
+| `parch-100` | `#FFF6E6` | Kartu di atas halaman |
+| `parch-200` | `#FBEACF` | Kartu sekunder, input |
+| `parch-300` | `#F1DCB6` | Border halus |
+| `parch-400` | `#E0C493` | Border kuat, garis pemisah |
+| `parch-500` | `#C0A470` | Placeholder, ikon nonaktif |
+
+**Ink (teks navy & garis)**
+
+| Token | Hex | Pemakaian |
+|-------|-----|-----------|
+| `ink-900` | `#22304D` | Teks utama |
+| `ink-700` | `#3B4B6E` | Teks sekunder kuat |
+| `ink-600` | `#5A6A8C` | Teks sekunder |
+| `ink-500` | `#808EA8` | Metadata, ikon |
+| `ink-300` | `#C6CFE0` | Garis pemisah |
+| `ink-100` | `#EDF1F8` | Latar netral |
 
 ### 3.2 Warna Semantik
 
 | Token | Hex | Arti | Pasangan |
 |-------|-----|------|----------|
-| `success` | `#15803D` | Lunas, saldo positif | ikon centang |
-| `success-bg` | `#DCFCE7` | Latar status lunas | — |
-| `danger` | `#B91C1C` | Hapus, saldo negatif | ikon tanda seru |
-| `danger-bg` | `#FEE2E2` | Latar peringatan | — |
-| `warning` | `#B45309` | Belum lunas, perlu aksi | ikon jam |
-| `warning-bg` | `#FEF3C7` | Latar pending | — |
-| `info` | `#0369A1` | Info, tips | ikon info |
-| `info-bg` | `#E0F2FE` | Latar info | — |
+| `success` | `#0E9F6E` | Lunas, saldo positif | ikon centang |
+| `success-bg` | `#D6F6E9` | Latar status lunas | — |
+| `danger` | `#E5484D` | Hapus, saldo negatif | ikon tanda seru |
+| `danger-bg` | `#FFE3E5` | Latar peringatan | — |
+| `warning` | `#A16207` | Belum lunas, perlu aksi | ikon jam |
+| `warning-bg` | `#FFF0C4` | Latar pending | — |
+| `info` | `#1668D6` | Info, tips | ikon info |
+| `info-bg` | `#D9EDFF` | Latar info | — |
 
 **Aturan status keuangan (wajib ikon + teks, bukan warna saja):**
 
 - Saldo **positif** (piutang) → `success` + ikon panah masuk + label "Harus menerima"
 - Saldo **negatif** (utang) → `danger` + ikon panah keluar + label "Harus bayar"
-- Saldo **nol** → `slate-500` + label "Aman, lunas"
+- Saldo **nol** → `ink-500` + label "Aman, lunas"
 
 ### 3.3 Rasio Kontras (penting)
 
 | Kombinasi | Rasio | Aman untuk |
 |-----------|-------|-----------|
-| `lagoon-700` di `sand-50` | 5.30:1 | Semua teks ✅ |
-| `lagoon-600` di `sand-50` | 3.62:1 | Hanya teks besar / ikon |
-| Putih di `lagoon-600` | 3.74:1 | Hanya teks besar ❌ untuk body |
-| Putih di `lagoon-700` | 5.47:1 | Semua teks ✅ |
-| `slate-900` di `sand-50` | 17.27:1 | Semua teks ✅ |
-| `slate-500` di `sand-50` | 4.60:1 | Metadata ≥13px ✅ |
-| `success` di `success-bg` | 4.57:1 | Badge lunas ✅ |
-| `danger` di `danger-bg` | 5.30:1 | Badge utang ✅ |
-| `warning` di `warning-bg` | 4.51:1 | Badge pending ✅ |
-| `slate-900` di `sunset-500` | 8.31:1 | Tombol accent ✅ |
-| `lagoon-800` di `lagoon-100` | 6.73:1 | Chip aktif ✅ |
+| `sky-700` di `parch-50` | ≥7:1 | Semua teks ✅ |
+| Putih di `sky-600` | ≥4.5:1 | Semua teks ✅ (tombol utama) |
+| `sky-600` di `parch-50` | ~4.6:1 | Metadata ≥13px ✅ |
+| `ink-900` di `parch-50` | >14:1 | Semua teks ✅ |
+| `ink-500` di `parch-50` | ≥4.5:1 | Metadata ≥13px ✅ |
+| `success` di `success-bg` | ≥4.5:1 | Badge lunas ✅ |
+| `danger` di `danger-bg` | ≥4.5:1 | Badge utang ✅ |
+| `warning` di `warning-bg` | ≥4.5:1 | Badge pending ✅ |
+| `ink-900` di `gold-500` | ≥8:1 | Pita/badge emas ✅ |
 
-> **Keputusan:** tombol utama memakai `lagoon-700` sebagai isi (bukan 600) agar
-> teks putih aman di ukuran kecil. `lagoon-600` dipakai untuk ikon, border, dan
-> area besar.
+> **Keputusan:** tombol utama memakai `sky-600` sebagai isi dengan teks putih
+> (aman ≥4.5:1). `sky-700` dipakai untuk teks/tautan di latar terang agar
+> kontras lebih tinggi. Verifikasi rasio dengan `scripts/check-contrast.mjs`
+> bila nilai berubah.
 
 ### 3.4 Gradasi & Tekstur (hemat)
 
-- **Sea gradient** (header trip): `linear-gradient(135deg, #0F766E, #14B8A6)`
-- **Sunset gradient** (kartu ringkasan, aksen): `linear-gradient(135deg, #F59E0B, #FB7185)`
-- **Grain overlay**: SVG noise opacity 0.03 di atas header bergradasi saja.
+- **Sky gradient** (header trip / panel quest): `linear-gradient(180deg, #55AEFF, #1668D6)`
+- **Gold gradient** (pita/ribbon): `linear-gradient(180deg, #FFD666, #F5A524)`
+- **Latar halaman**: langit lembut (radial biru) + kertas hangat (radial emas) di atas `parch-50`.
 - Gradasi **tidak** dipakai di latar form atau area angka (mengganggu baca).
 
 ---
@@ -189,27 +202,27 @@ Di layar ≥1024px, `body` naik ke 16/24.
 
 | Peran | Token | Nilai |
 |-------|-------|-------|
-| Latar halaman | `bg` | `sand-50` |
-| Permukaan | `surface` | `#FFFFFF` |
-| Permukaan alternatif | `surface-2` | `sand-100` |
-| Teks utama | `fg` | `slate-900` |
-| Teks sekunder | `fg-muted` | `slate-600` |
-| Border | `border` | `sand-300` |
-| Border kuat | `border-strong` | `sand-400` |
-| Aksen | `accent` | `sunset-500` |
-| Aksi utama | `action` | `lagoon-700` |
+| Latar halaman | `bg` | `parch-50` |
+| Permukaan | `surface` | `#FFFEFB` |
+| Permukaan alternatif | `surface-2` | `parch-100` |
+| Teks utama | `fg` | `ink-900` |
+| Teks sekunder | `fg-muted` | `ink-600` |
+| Border | `border` | `parch-300` |
+| Border kuat | `border-strong` | `parch-400` |
+| Aksen | `accent` | `gold-500` |
+| Aksi utama | `action` | `sky-600` |
 
 ### 4.2 Tema Gelap (v1.1, token sudah disiapkan)
 
 | Peran | Nilai |
 |-------|-------|
-| `bg` | `#08110F` |
-| `surface` | `#12201D` |
-| `surface-2` | `#1A2C28` |
-| `fg` | `#ECFDF5` |
-| `fg-muted` | `#9DB5AE` |
-| `border` | `#25403A` |
-| `action` | `lagoon-400` (teks di atasnya gelap) |
+| `bg` | `#101A2E` |
+| `surface` | `#17233D` |
+| `surface-2` | `#1E2D4B` |
+| `fg` | `#EAF1FF` |
+| `fg-muted` | `#A3B3D0` |
+| `border` | `#2C3D61` |
+| `action` | `sky-400` (teks di atasnya gelap) |
 
 > Implementasi: token didefinisikan sebagai CSS variable sehingga tema gelap
 > cukup menukar nilai, tanpa mengubah kelas komponen.
@@ -249,19 +262,21 @@ Di layar ≥1024px, `body` naik ke 16/24.
 
 | Token | Nilai | Pemakaian |
 |-------|-------|-----------|
-| `shadow-xs` | `0 1px 2px rgba(15,23,42,.06)` | Kartu datar, input |
-| `shadow-sm` | `0 2px 6px rgba(15,23,42,.08)` | Kartu standar |
-| `shadow-md` | `0 6px 16px rgba(13,148,136,.12)` | Kartu terangkat, FAB |
-| `shadow-lg` | `0 -8px 28px rgba(15,23,42,.16)` | Bottom sheet, modal |
+| `shadow-xs` | `0 1px 2px rgba(34,48,77,.08)` | Kartu datar, input |
+| `shadow-sm` | `0 2px 6px rgba(34,48,77,.10)` | Kartu standar |
+| `shadow-md` | `0 2px 0 rgba(20,66,138,.9), 0 6px 16px rgba(22,104,214,.18)` | Panel "jendela game", FAB |
+| `shadow-lg` | `0 -8px 28px rgba(34,48,77,.18)` | Bottom sheet, modal |
 
-> Bayangan bernuansa teal (`rgba(13,148,136,…)`) untuk elemen merek, netral untuk
-> sisanya. Hindari bayangan hitam pekat.
+> Panel "jendela game" memakai **bayangan bertingkat**: garis dasar solid
+> navy (`2px`) + bayangan lembut kebiruan. Elemen merek bernuansa sky, netral
+> bernuansa ink. Hindari bayangan hitam pekat.
 
 ### 5.4 Border
 
 - Standar: `1px solid var(--border)`
-- Kartu di latar sand: `1px solid var(--border)` + `shadow-sm`
-- Fokus: `2px solid lagoon-600` dengan `outline-offset: 2px`
+- **Panel "jendela game":** `2px solid var(--ink-900)` + `radius-md` + `shadow-md`
+  (kelas siap pakai: `.rpg-panel`, `.rpg-panel-sky`, `.rpg-corner`).
+- Fokus: `2px solid sky-500` dengan ring `sky-500/25`
 
 ---
 
@@ -308,7 +323,7 @@ Di layar ≥1024px, `body` naik ke 16/24.
 | Belanja | `shopping-bag` |
 | Lain-lain | `receipt` |
 
-- **Logo:** wordmark "KemanaKita" (Gabarito 700) + ikon pin-lokasi yang
+- **Logo:** wordmark "KemanaKita" (M PLUS Rounded 1c 800) + ikon pin-lokasi yang
   membentuk tas ransel. Sediakan `logo.svg`, `logo-mark.svg`, `favicon.svg`.
 
 ---
@@ -319,10 +334,10 @@ Di layar ≥1024px, `body` naik ke 16/24.
 
 | Varian | Latar | Teks | Border | Pemakaian |
 |--------|-------|------|--------|-----------|
-| `primary` | `lagoon-700` | putih | — | Aksi utama (1 per layar) |
-| `secondary` | transparan | `lagoon-700` | `1px lagoon-600` | Aksi pendukung |
-| `accent` | `sunset-500` | `slate-900` | — | Aksi penting keuangan |
-| `ghost` | transparan | `slate-700` | — | Aksi tersier |
+| `primary` | `sky-600` | putih | tepi `ink-900` 2px (`.rpg-btn`) | Aksi utama (1 per layar) |
+| `secondary` | transparan | `sky-700` | `1px sky-600` | Aksi pendukung |
+| `accent` | `gold-500` | `ink-900` | — | Aksi penting keuangan |
+| `ghost` | transparan | `ink-700` | — | Aksi tersier |
 | `danger` | `danger` | putih | — | Hapus (selalu konfirmasi) |
 
 **Spesifikasi:**
@@ -339,8 +354,8 @@ Di layar ≥1024px, `body` naik ke 16/24.
 - Tinggi 48px, radius `radius-md`, border `1px var(--border)`, latar `surface`.
 - Padding 12px 14px. Teks 16px (**penting: cegah auto-zoom iOS**).
 - Label di atas input, `label` 13px/600, jarak 6px.
-- Placeholder `sand-500`.
-- **Fokus:** border `lagoon-600` + ring `2px` transparan teal.
+- Placeholder `parch-500`.
+- **Fokus:** border `sky-500` + ring `2px sky-500/25`.
 - **Error:** border `danger` + pesan 13px `danger` dengan ikon, di bawah field.
 - **Nominal uang:** prefix "Rp" sebagai teks tetap di kiri, input `inputmode="numeric"`,
   format ribuan otomatis saat blur, angka tabular.
@@ -356,7 +371,7 @@ Di layar ≥1024px, `body` naik ke 16/24.
 - Judul kartu `h2`/`h3`; isi `body`; metadata `caption` + ikon.
 - Kartu trip: header gradasi sea + nama trip (`display`), baris metadata
   (destinasi, rentang tanggal), footer chip status.
-- Kartu pengeluaran: kiri = ikon kategori dalam lingkaran `lagoon-50`;
+- Kartu pengeluaran: kiri = ikon kategori dalam lingkaran `sky-50`;
   tengah = judul + "Dibayar Budi · 12 Okt"; kanan = `amount` + caption bagian
   ("bagianmu Rp50.000").
 
@@ -365,8 +380,8 @@ Di layar ≥1024px, `body` naik ke 16/24.
 **Mobile (bottom tabs):** `Trip | Itinerary | Keuangan | Anggota`
 - Tinggi 60px + safe-area inset bawah.
 - Ikon 24px + label `caption`.
-- Aktif: ikon & label `lagoon-700`, indikator pill di belakang ikon.
-- Nonaktif: `slate-500`.
+- Aktif: ikon & label `sky-700`, indikator pill di belakang ikon.
+- Nonaktif: `ink-500`.
 - Header atas: nama trip (bisa ditekan untuk ganti trip) + avatar.
 
 **Desktop:** nav atas horizontal + konten 2 kolom (itinerary kiri, ringkasan kas
@@ -376,12 +391,12 @@ kanan), sidebar 280px.
 
 | Varian | Latar | Teks | Pemakaian |
 |--------|-------|------|-----------|
-| `chip-neutral` | `sand-200` | `slate-700` | Tag, filter tidak aktif |
-| `chip-active` | `lagoon-100` | `lagoon-800` | Filter aktif |
+| `chip-neutral` | `parch-200` | `ink-700` | Tag, filter tidak aktif |
+| `chip-active` | `sky-100` | `sky-800` | Filter aktif |
 | `badge-lunas` | `success-bg` | `success` | Status lunas |
 | `badge-utang` | `danger-bg` | `danger` | Status berutang |
 | `badge-pending` | `warning-bg` | `warning` | Belum dibayar |
-| `badge-owner` | `sunset-100` | `sunset-700` | Penanda owner |
+| `badge-owner` | `gold-100` | `gold-700` | Penanda owner |
 
 - Tinggi 24–28px, padding 8–10px, radius `radius-full`, teks `overline`.
 - Selalu sertakan ikon pada badge status.
@@ -390,7 +405,7 @@ kanan), sidebar 280px.
 
 - Ukuran: 24 (di list), 32 (standar), 48 (profil), 64 (header trip).
 - Bulat penuh, inisial nama (2 huruf) di atas warna deterministik dari palet
-  teal/amber (hash nama → warna) agar konsisten per orang.
+  teal/amber diganti sky/gold (hash nama → warna) agar konsisten per orang.
 - Grup avatar bertumpuk (overlap -8px), maksimal 4 + "+3".
 - Baris anggota: avatar, nama, badge role, dan (owner) menu aksi.
 
@@ -405,10 +420,10 @@ kanan), sidebar 280px.
 
 ### 8.8 State Kosong & Muat
 
-- **Empty state:** ikon ilustratif 64px (garis, warna `lagoon-300`), judul `h2`,
+- **Empty state:** ikon ilustratif 64px (garis, warna `sky-300`), judul `h2`,
   satu kalimat `body`, satu tombol aksi. Contoh: "Belum ada rencana. Yuk bikin
   trip pertama kita!"
-- **Skeleton:** blok `sand-200` dengan shimmer 1.4s, meniru bentuk kartu asli.
+- **Skeleton:** blok `parch-200` dengan shimmer 1.4s, meniru bentuk kartu asli.
 - **Error state:** ikon, pesan jelas, tombol "Coba lagi".
 - **Toast:** muncul dari atas (HP) / kanan bawah (desktop), 3 detik, `shadow-md`,
   ikon status + teks pendek.
@@ -443,69 +458,70 @@ kanan), sidebar 280px.
 
 ### 10.1 CSS Variables
 
+> **Sumber kebenaran:** `src/app/globals.css`. Nama kanonik adalah
+> `sky`/`gold`/`parch`/`ink`/`coral`/`mint`; nama lama `lagoon`/`sunset`/`sand`/
+> `slate` didefinisikan sebagai **alias** (`--lagoon-700: var(--sky-700)`) agar
+> kelas lama tetap valid.
+
 ```css
 :root {
-  /* Merek */
-  --lagoon-50:  #F0FDFA;
-  --lagoon-100: #CCFBF1;
-  --lagoon-200: #99F6E4;
-  --lagoon-300: #5EEAD4;
-  --lagoon-400: #2DD4BF;
-  --lagoon-500: #14B8A6;
-  --lagoon-600: #0D9488;
-  --lagoon-700: #0F766E;
-  --lagoon-800: #115E59;
-  --lagoon-900: #134E4A;
-  --lagoon-950: #042F2E;
+  /* Sky (primary) */
+  --sky-50:#EFF7FF; --sky-100:#D9EDFF; --sky-200:#BCE0FF; --sky-300:#8CCBFF;
+  --sky-400:#55AEFF; --sky-500:#2B8FEF; --sky-600:#1668D6; --sky-700:#1250A8;
+  --sky-800:#14428A; --sky-900:#163A72; --sky-950:#0E2549;
 
-  --sunset-50:  #FFFBEB;
-  --sunset-100: #FEF3C7;
-  --sunset-300: #FCD34D;
-  --sunset-500: #F59E0B;
-  --sunset-600: #D97706;
-  --sunset-700: #B45309;
+  /* Gold (accent) */
+  --gold-50:#FFF9E8; --gold-100:#FFF0C4; --gold-300:#FFD666;
+  --gold-500:#F5A524; --gold-600:#D08305; --gold-700:#A16207;
 
-  --sand-50:  #FDFBF7;
-  --sand-100: #FAF6EF;
-  --sand-200: #F2EBE0;
-  --sand-300: #E6DCCC;
-  --sand-400: #CFC2AC;
-  --sand-500: #B0A088;
+  /* Parchment (permukaan) */
+  --parch-50:#FFFCF4; --parch-100:#FFF6E6; --parch-200:#FBEACF;
+  --parch-300:#F1DCB6; --parch-400:#E0C493; --parch-500:#C0A470;
+
+  /* Ink (teks & garis) */
+  --ink-900:#22304D; --ink-700:#3B4B6E; --ink-600:#5A6A8C;
+  --ink-500:#808EA8; --ink-300:#C6CFE0; --ink-100:#EDF1F8;
+
+  /* Coral (bahaya/HP) & Mint (sukses/MP) */
+  --coral-500:#E5484D; --coral-100:#FFE3E5;
+  --mint-500:#0E9F6E;  --mint-100:#D6F6E9;
 
   /* Peran */
-  --bg: var(--sand-50);
-  --surface: #FFFFFF;
-  --surface-2: var(--sand-100);
-  --fg: #0F172A;
-  --fg-muted: #475569;
-  --border: var(--sand-300);
-  --border-strong: var(--sand-400);
-  --accent: var(--sunset-500);
-  --action: var(--lagoon-700);
-  --action-hover: var(--lagoon-800);
+  --bg: var(--parch-50);
+  --surface: #FFFEFB;
+  --surface-2: var(--parch-100);
+  --fg: var(--ink-900);
+  --fg-muted: var(--ink-600);
+  --border: var(--parch-300);
+  --border-strong: var(--parch-400);
+  --accent: var(--gold-500);
+  --action: var(--sky-600);
+  --action-hover: var(--sky-700);
 
   /* Semantik */
-  --success: #15803D;
-  --success-bg: #DCFCE7;
-  --danger: #B91C1C;
-  --danger-bg: #FEE2E2;
-  --warning: #B45309;
-  --warning-bg: #FEF3C7;
-  --info: #0369A1;
-  --info-bg: #E0F2FE;
+  --success: var(--mint-500);
+  --success-bg: var(--mint-100);
+  --danger: var(--coral-500);
+  --danger-bg: var(--coral-100);
+  --warning: var(--gold-700);
+  --warning-bg: var(--gold-100);
+  --info: var(--sky-600);
+  --info-bg: var(--sky-100);
 
   /* Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
   --radius-full: 9999px;
 
   /* Bayangan */
-  --shadow-xs: 0 1px 2px rgba(15, 23, 42, .06);
-  --shadow-sm: 0 2px 6px rgba(15, 23, 42, .08);
-  --shadow-md: 0 6px 16px rgba(13, 148, 136, .12);
-  --shadow-lg: 0 -8px 28px rgba(15, 23, 42, .16);
+  --shadow-xs: 0 1px 2px rgba(34, 48, 77, .08);
+  --shadow-sm: 0 2px 6px rgba(34, 48, 77, .10);
+  --shadow-md: 0 8px 20px rgba(22, 104, 214, .16);
+  --shadow-lg: 0 -10px 30px rgba(34, 48, 77, .20);
+  --shadow-panel: 0 2px 0 rgba(34,48,77,.14), 0 10px 22px rgba(34,48,77,.12);
+  --shadow-panel-sky: 0 2px 0 rgba(14,37,73,.28), 0 12px 26px rgba(22,104,214,.28);
 
   /* Gerak */
   --motion-fast: 120ms;
@@ -521,27 +537,46 @@ kanan), sidebar 280px.
 ```css
 @import "tailwindcss";
 
-@theme {
-  --color-lagoon-50:  #F0FDFA;
-  --color-lagoon-600: #0D9488;
-  --color-lagoon-700: #0F766E;
-  --color-sunset-500: #F59E0B;
-  --color-sand-50:  #FDFBF7;
-  --color-sand-300: #E6DCCC;
+@theme inline {
+  /* Kanonik */
+  --color-sky-600: var(--sky-600);
+  --color-sky-700: var(--sky-700);
+  --color-gold-500: var(--gold-500);
+  --color-parch-50: var(--parch-50);
+  --color-parch-300: var(--parch-300);
+  --color-ink-900: var(--ink-900);
 
-  --font-display: "Gabarito", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  /* Alias nama lama */
+  --color-lagoon-600: var(--sky-600);
+  --color-lagoon-700: var(--sky-700);
+  --color-sunset-500: var(--gold-500);
+  --color-sand-50: var(--parch-50);
+  --color-sand-300: var(--parch-300);
 
-  --radius-lg: 16px;
-  --shadow-md: 0 6px 16px rgba(13, 148, 136, .12);
+  --font-display: var(--font-rounded), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 }
 ```
 
 ### 10.3 Font Loading (Next.js)
 
-- `next/font/google` untuk Gabarito + Plus Jakarta Sans, `display: swap`,
-  subset `latin`, dipakai via CSS variable `--font-display` dan `--font-sans`.
-- Preload hanya dua bobot utama (400, 700) untuk menghemat data di HP.
+- `next/font/google` untuk **M PLUS Rounded 1c** (display) + **Plus Jakarta Sans**
+  (body), `display: swap`, subset `latin`.
+- Dipakai via CSS variable `--font-rounded` (display) dan `--font-jakarta` (body),
+  yang lalu dipetakan ke `--font-display` / `--font-sans` di `@theme inline`.
+- Preload hanya dua bobot utama (500, 700) untuk menghemat data di HP.
+
+### 10.4 Utilitas "Jendela Game" (`@layer components`)
+
+Kelas siap pakai untuk panel bergaya JRPG (didefinisikan di `globals.css`):
+
+| Kelas | Fungsi |
+|-------|--------|
+| `.rpg-panel` | Panel kertas: `2px` border ink, radius `md`, `shadow-panel`, permukaan `--surface` |
+| `.rpg-panel-sky` | Panel header: latar gradasi sky + teks putih + `shadow-panel-sky` |
+| `.rpg-ribbon` | Pita emas (badge/judul kecil): gradasi gold + teks `ink-900` |
+| `.rpg-btn` | Tombol bergaya game: tepi tebal + bayangan dasar solid (pressed turun) |
+| `.rpg-corner` | Aksen sudut dekoratif untuk panel |
 
 ---
 
@@ -551,7 +586,7 @@ kanan), sidebar 280px.
 |-----------|--------|
 | Kontras teks | Minimal 4.5:1 (body), 3:1 (≥18px bold / ikon) |
 | Target sentuh | Minimal 44×44px, jarak antar target ≥8px |
-| Fokus | Terlihat jelas: ring 2px `lagoon-600` + offset 2px |
+| Fokus | Terlihat jelas: ring 2px `sky-500` + offset 2px |
 | Keyboard | Semua aksi dapat dijangkau Tab; modal terperangkap fokus |
 | Label | Semua input punya `<label>`; tombol ikon punya `aria-label` |
 | Status | Tidak hanya warna — selalu ada ikon + teks |
@@ -567,7 +602,7 @@ kanan), sidebar 280px.
 - [ ] Semua tombol ≥44px dan nyaman dijangkau ibu jari.
 - [ ] Nominal uang memakai angka tabular dan format `Rp 1.250.000`.
 - [ ] Status keuangan selalu punya ikon + teks, bukan hanya warna.
-- [ ] Kontras teks lolos 4.5:1 (cek tombol `lagoon-700`, bukan 600).
+- [ ] Kontras teks lolos 4.5:1 (tombol `sky-600` + teks putih; teks di latar terang pakai `sky-700`).
 - [ ] Bottom-sheet & FAB tidak menutupi konten (padding safe-area).
 - [ ] Loading memakai skeleton, bukan layar kosong.
 - [ ] Empty state punya ajakan aksi.

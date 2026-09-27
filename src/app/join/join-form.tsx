@@ -18,7 +18,7 @@ export function JoinForm({ code }: { code: string }) {
       {state.status === "error" && (
         <p
           role="alert"
-          className="flex items-start gap-2 rounded-md bg-danger-bg px-3 py-2.5 text-[14px] text-danger"
+          className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger-bg px-3 py-2.5 text-[14px] text-danger"
         >
           <span aria-hidden>⚠️</span>
           {state.message}
@@ -28,7 +28,7 @@ export function JoinForm({ code }: { code: string }) {
       <button
         type="submit"
         disabled={pending}
-        className="flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover disabled:cursor-wait disabled:opacity-60"
+        className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Bergabung…" : "Gabung trip ini"}
       </button>

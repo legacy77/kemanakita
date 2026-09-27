@@ -16,8 +16,8 @@ function SubmitButton({ label, danger }: { label: string; danger: boolean }) {
       disabled={pending}
       className={`h-8 shrink-0 rounded-md px-3 text-[13px] font-semibold disabled:opacity-60 ${
         danger
-          ? "border border-danger text-danger hover:bg-danger-bg"
-          : "border border-border text-fg-muted hover:bg-lagoon-50"
+          ? "border-2 border-danger/50 text-danger hover:bg-danger-bg"
+          : "border-2 border-border-strong text-fg-muted hover:bg-sky-100"
       }`}
     >
       {pending ? "…" : label}

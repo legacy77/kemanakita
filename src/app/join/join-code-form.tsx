@@ -23,14 +23,14 @@ export function JoinCodeForm() {
           autoCorrect="off"
           inputMode="text"
           placeholder="Misalnya: a1b2c3d4e5f6"
-          className="h-12 rounded-md border border-border bg-surface px-3.5 text-[16px] font-normal outline-none placeholder:text-sand-500 focus:border-lagoon-600 focus:ring-2 focus:ring-lagoon-600/20"
+          className="h-12 rounded-md border-2 border-border-strong bg-surface px-3.5 text-[16px] font-normal outline-none placeholder:text-parch-500 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
         />
       </label>
 
       {state.status === "error" && (
         <p
           role="alert"
-          className="flex items-start gap-2 rounded-md bg-danger-bg px-3 py-2.5 text-[14px] text-danger"
+          className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger-bg px-3 py-2.5 text-[14px] text-danger"
         >
           <span aria-hidden>⚠️</span>
           {state.message}
@@ -40,7 +40,7 @@ export function JoinCodeForm() {
       <button
         type="submit"
         disabled={pending}
-        className="flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover disabled:cursor-wait disabled:opacity-60"
+        className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Ngecek kode…" : "Cek & gabung"}
       </button>
