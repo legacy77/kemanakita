@@ -5,6 +5,8 @@ import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createTrip, type CreateTripState } from "@/lib/trips/actions";
 import { signOut } from "@/lib/auth/actions";
+import { DeleteTripButton } from "./delete-trip-button";
+import { DisplayNameForm } from "./display-name-form";
 
 export interface TripCard {
   id: string;
@@ -31,7 +33,6 @@ export function TripsPageClient({
 }) {
   const [state, action, pending] = useActionState(createTrip, initialState);
   const [formOpen, setFormOpen] = useState(false);
-  const [name, setName] = useState(userName);
   const [copied, setCopied] = useState<string | null>(null);
   const router = useRouter();
 
@@ -56,7 +57,7 @@ export function TripsPageClient({
         <div className="min-w-0">
           <span className="rpg-ribbon mb-1">🧭 Party Kamu</span>
           <p className="text-[12px] font-medium tracking-[0.01em] text-ink-600">
-            Halo, {name === "" ? "teman jalan" : name}! 👋
+            Halo, {userName === "" ? "teman jalan" : userName}! 👋
           </p>
           <h1 className="font-display truncate text-[26px] leading-8 font-extrabold text-action">
             Trip kamu
@@ -123,6 +124,9 @@ export function TripsPageClient({
                 >
                   {copied === trip.inviteCode ? "✅ Tersalin!" : "🔗 Undang"}
                 </button>
+                {trip.role === "owner" && (
+                  <DeleteTripButton tripId={trip.id} tripTitle={trip.title} />
+                )}
               </div>
             </li>
           ))}
@@ -219,16 +223,9 @@ export function TripsPageClient({
         <Link href="/join" className="font-semibold text-action underline underline-offset-4">
           Gabung trip
         </Link>
-        <label className="mt-3 flex items-center justify-center gap-2 text-[13px] text-ink-600">
-          Nama tampilan:
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={80}
-            placeholder="Nama kamu"
-            className="h-9 w-36 rounded-md border border-border bg-surface px-2 text-[14px] outline-none focus:border-lagoon-600"
-          />
-        </label>
+        <div className="mt-3">
+          <DisplayNameForm initialName={userName} />
+        </div>
       </footer>
     </main>
   );
