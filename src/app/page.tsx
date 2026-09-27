@@ -1,6 +1,18 @@
 import Link from "next/link";
 
-export default function Home() {
+// Halaman utama: belum login → ajak masuk; sudah login → terus ke /trips.
+// Rujukan: PRD §7.5 (`/` → landing / redirect).
+
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+
+export default async function Home() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) redirect("/trips");
+
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-12">
       <div className="flex max-w-md flex-col items-center gap-3 text-center">
@@ -15,7 +27,7 @@ export default function Home() {
       <div className="flex w-full max-w-sm flex-col gap-3">
         <Link
           href="/login"
-          className="flex h-12 w-full items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
+          className="flex h-14 w-full items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
         >
           Mulai
         </Link>

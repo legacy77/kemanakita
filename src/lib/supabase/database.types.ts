@@ -1,6 +1,7 @@
-// Tipe DB hasil `supabase gen types typescript`.
-// Regenerasi saat skema berubah; JANGAN edit manual.
-// Stub ini cukup untuk typecheck tanpa koneksi Supabase.
+// Tipe DB — bentuk mengikuti output `supabase gen types typescript`.
+// Diperluas manual agar cocok dengan skema di
+// `supabase/migrations/20260926000000_init.sql` + `20260927000000_owner_trigger.sql`.
+// Regenerasi saat skema berubah; JANGAN ubah nama kolom sembarangan.
 
 export type TripRole = "owner" | "member";
 
@@ -14,69 +15,190 @@ export type ExpenseCategory =
 
 export type ExpenseKind = "expense" | "settlement";
 
-export interface Profile {
-  id: string;
-  name: string;
-  created_at: string;
-}
-
-export interface Trip {
-  id: string;
-  title: string;
-  destination: string | null;
-  start_date: string;
-  end_date: string;
-  invite_code: string;
-  created_by: string;
-  created_at: string;
-}
-
-export interface TripMember {
-  trip_id: string;
-  user_id: string;
-  role: TripRole;
-  joined_at: string;
-}
-
-export interface ItineraryItem {
-  id: string;
-  trip_id: string;
-  date: string;
-  time: string | null;
-  title: string;
-  notes: string | null;
-  location: string | null;
-  sort_order: number;
-  created_at: string;
-}
-
-export interface Expense {
-  id: string;
-  trip_id: string;
-  title: string;
-  amount: number;
-  paid_by: string;
-  date: string;
-  category: ExpenseCategory;
-  kind: ExpenseKind;
-  created_at: string;
-}
-
-export interface ExpenseSplit {
-  expense_id: string;
-  user_id: string;
-  share_amount: number;
-}
-
 export interface Database {
   public: {
     Tables: {
-      profiles: { Row: Profile };
-      trips: { Row: Trip };
-      trip_members: { Row: TripMember };
-      itinerary_items: { Row: ItineraryItem };
-      expenses: { Row: Expense };
-      expense_splits: { Row: ExpenseSplit };
+      profiles: {
+        Row: {
+          id: string;
+          name: string;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          name?: string;
+          created_at?: string;
+        };
+        Update: {
+          name?: string;
+        };
+        Relationships: [];
+      };
+      trips: {
+        Row: {
+          id: string;
+          title: string;
+          destination: string | null;
+          start_date: string;
+          end_date: string;
+          invite_code: string;
+          created_by: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          destination?: string | null;
+          start_date: string;
+          end_date: string;
+          invite_code?: string;
+          created_by: string;
+          created_at?: string;
+        };
+        Update: {
+          title?: string;
+          destination?: string | null;
+          start_date?: string;
+          end_date?: string;
+        };
+        Relationships: [];
+      };
+      trip_members: {
+        Row: {
+          trip_id: string;
+          user_id: string;
+          role: TripRole;
+          joined_at: string;
+        };
+        Insert: {
+          trip_id: string;
+          user_id: string;
+          role?: TripRole;
+          joined_at?: string;
+        };
+        Update: never;
+        Relationships: [];
+      };
+      itinerary_items: {
+        Row: {
+          id: string;
+          trip_id: string;
+          date: string;
+          time: string | null;
+          title: string;
+          notes: string | null;
+          location: string | null;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          trip_id: string;
+          date: string;
+          time?: string | null;
+          title: string;
+          notes?: string | null;
+          location?: string | null;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          date?: string;
+          time?: string | null;
+          title?: string;
+          notes?: string | null;
+          location?: string | null;
+          sort_order?: number;
+        };
+        Relationships: [];
+      };
+      expenses: {
+        Row: {
+          id: string;
+          trip_id: string;
+          title: string;
+          amount: number;
+          paid_by: string;
+          date: string;
+          category: ExpenseCategory;
+          kind: ExpenseKind;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          trip_id: string;
+          title: string;
+          amount: number;
+          paid_by: string;
+          date?: string;
+          category?: ExpenseCategory;
+          kind?: ExpenseKind;
+          created_at?: string;
+        };
+        Update: {
+          title?: string;
+          amount?: number;
+          paid_by?: string;
+          date?: string;
+          category?: ExpenseCategory;
+          kind?: ExpenseKind;
+        };
+        Relationships: [];
+      };
+      expense_splits: {
+        Row: {
+          expense_id: string;
+          user_id: string;
+          share_amount: number;
+        };
+        Insert: {
+          expense_id: string;
+          user_id: string;
+          share_amount: number;
+        };
+        Update: {
+          share_amount?: number;
+        };
+        Relationships: [];
+      };
     };
+    Views: Record<string, never>;
+    Functions: {
+      is_trip_member: {
+        Args: { p_trip_id: string; p_user_id: string };
+        Returns: boolean;
+      };
+      is_trip_owner: {
+        Args: { p_trip_id: string; p_user_id: string };
+        Returns: boolean;
+      };
+      has_other_owner: {
+        Args: { p_trip_id: string; p_user_id: string };
+        Returns: boolean;
+      };
+      get_trip_by_invite: {
+        Args: { p_code: string };
+        Returns: {
+          id: string;
+          title: string;
+          destination: string | null;
+          start_date: string;
+          end_date: string;
+        }[];
+      };
+    };
+    Enums: {
+      trip_role: TripRole;
+      expense_category: ExpenseCategory;
+      expense_kind: ExpenseKind;
+    };
+    CompositeTypes: Record<string, never>;
   };
 }
+
+export type Trip = Database["public"]["Tables"]["trips"]["Row"];
+export type TripMember = Database["public"]["Tables"]["trip_members"]["Row"];
+export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+export type ItineraryItemRow = Database["public"]["Tables"]["itinerary_items"]["Row"];
+export type ExpenseRow = Database["public"]["Tables"]["expenses"]["Row"];
+export type ExpenseSplitRow = Database["public"]["Tables"]["expense_splits"]["Row"];
