@@ -81,52 +81,6 @@ npm run dev
 
 Buka [http://localhost:3000](http://localhost:3000) — udah jalan. ✨
 
-### Perintah yang sering dipakai
-
-```bash
-npm run dev        # mode development
-npm run build      # build production
-npm run lint       # cek kode
-npm run typecheck  # cek tipe TypeScript
-node scripts/check-contrast.mjs   # cek kontras warna (aksesibilitas)
-```
-
----
-
-## Struktur folder 🗂️
-
-```
-src/
-  app/                 # halaman & layout (Next.js App Router)
-    page.tsx           # landing
-    login/             # halaman masuk
-  lib/
-    supabase/          # client Supabase (server & browser) + tipe DB
-supabase/
-  migrations/          # skema database + RLS
-scripts/               # utilitas (mis. cek kontras)
-docs/
-  PRD.md               # apa yang dibangun & kenapa
-  design_system.md     # warna, font, komponen
-  TODO.md              # progres per milestone
-```
-
----
-
-## Status sekarang 📍
-
-Jujur ya — ini masih **dibangun**, belum jadi app yang bisa dipakai buat trip beneran.
-
-- [x] **M0** — Setup project, sistem desain, token warna
-- [ ] **M1** — Database & aturan akses (RLS)
-- [ ] **M2** — Login, bikin trip, undang temen
-- [ ] **M3** — Itinerary
-- [ ] **M4** — Keuangan & split-bill
-- [ ] **M5** — Polish mobile-first
-- [ ] **M6** — Deploy ke Vercel
-
-Detail lengkap ada di [`docs/TODO.md`](docs/TODO.md).
-
 ---
 
 ## Yang belum ada (dan sengaja belum dibuat) 🙅
@@ -146,7 +100,7 @@ Biar fokus dulu, beberapa hal ditahan buat versi berikutnya:
 
 ## Kontribusi 🤝
 
-Project ini masih kecil dan sedang tumbuh. Kalau ada ide atau nemu bug, buka issue atau PR aja. Kalau mau ngoprek, baca dulu [`docs/PRD.md`](docs/PRD.md) dan [`docs/design_system.md`](docs/design_system.md) biar satu arah.
+Project ini masih kecil dan sedang tumbuh. Kalau ada ide atau nemu bug, buka issue atau PR aja.
 
 ---
 
