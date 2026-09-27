@@ -19,9 +19,19 @@ if (typeof window !== "undefined") {
 }
 
 function serviceEnv(): { url: string; key: string } {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   // SENGAJA tanpa prefix NEXT_PUBLIC_ agar tidak ikut ter-inline ke bundle klien.
-  const key = process.env.SUPABASE_SERVICE_KEY;
+  // Terima beberapa nama: proyek lokal memakai SUPABASE_SERVICE_KEY, sedangkan
+  // integrasi Vercel/Supabase menyediakan SUPABASE_SERVICE_ROLE_KEY/SUPABASE_SECRET_KEY.
+  // Pakai `||` (bukan `??`) supaya nilai kosong ("") juga jatuh ke kandidat berikutnya.
+  const url =
+    process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ||
+    process.env.SUPABASE_URL?.trim() ||
+    "";
+  const key =
+    process.env.SUPABASE_SERVICE_KEY?.trim() ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
+    process.env.SUPABASE_SECRET_KEY?.trim() ||
+    "";
   if (!url || !key) {
     throw new Error("Env Supabase service belum lengkap (lihat .env.example).");
   }
