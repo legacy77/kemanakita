@@ -20,6 +20,7 @@ import { EXPENSE_CATEGORIES } from "@/lib/validate";
 import { AddItineraryForm } from "./add-itinerary-form";
 import { AddExpenseForm } from "./add-expense-form";
 import { DeleteItineraryButton, DeleteExpenseButton } from "./delete-buttons";
+import { EditItineraryForm } from "./edit-itinerary-form";
 import { SettlementButton } from "./settlement-button";
 import { TabNav } from "./tab-nav";
 
@@ -226,25 +227,40 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
                   {day.items.map((item) => (
                     <li
                       key={item.id}
-                      className="flex items-start justify-between gap-3 rounded-md border border-border px-3 py-2.5"
+                      className="flex flex-col gap-2 rounded-md border border-border px-3 py-2.5"
                     >
-                      <div className="min-w-0">
-                        <p className="text-[15px] leading-[21px] font-semibold text-fg">
-                          {item.time !== null && (
-                            <span className="mr-2 rounded bg-lagoon-50 px-1.5 py-0.5 text-[13px] font-bold text-action">
-                              {item.time}
-                            </span>
-                          )}
-                          {item.title}
-                        </p>
-                        {(item.location !== null && item.location !== "") ||
-                        (item.notes !== null && item.notes !== "") ? (
-                          <p className="mt-0.5 truncate text-[13px] leading-5 text-fg-muted">
-                            {[item.location, item.notes].filter((v) => v !== null && v !== "").join(" · ")}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="text-[15px] leading-[21px] font-semibold text-fg">
+                            {item.time !== null && (
+                              <span className="mr-2 rounded bg-lagoon-50 px-1.5 py-0.5 text-[13px] font-bold text-action">
+                                {item.time}
+                              </span>
+                            )}
+                            {item.title}
                           </p>
-                        ) : null}
+                          {(item.location !== null && item.location !== "") ||
+                          (item.notes !== null && item.notes !== "") ? (
+                            <p className="mt-0.5 truncate text-[13px] leading-5 text-fg-muted">
+                              {[item.location, item.notes].filter((v) => v !== null && v !== "").join(" · ")}
+                            </p>
+                          ) : null}
+                        </div>
+                        <DeleteItineraryButton tripId={tripId} itemId={item.id} />
                       </div>
-                      <DeleteItineraryButton tripId={tripId} itemId={item.id} />
+                      <EditItineraryForm
+                        tripId={tripId}
+                        itemId={item.id}
+                        startDate={trip.start_date}
+                        endDate={trip.end_date}
+                        defaultValues={{
+                          date: item.date,
+                          time: item.time ?? "",
+                          title: item.title,
+                          location: item.location ?? "",
+                          notes: item.notes ?? "",
+                        }}
+                      />
                     </li>
                   ))}
                 </ul>

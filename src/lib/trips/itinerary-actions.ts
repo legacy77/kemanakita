@@ -1,7 +1,7 @@
 "use server";
 
 // Server action itinerary — PRD §4.4. RLS adalah otoritas; semua anggota trip
-// boleh tambah/hapus (policy `itinerary_*_member`). Service key TIDAK dipakai.
+// boleh tambah/ubah/hapus (policy `itinerary_*_member`). Service key TIDAK dipakai.
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
@@ -12,6 +12,16 @@ export type ItineraryFormState =
   | { status: "error"; message: string }
   | { status: "ok" };
 
+function inputFromForm(formData: FormData) {
+  return {
+    date: String(formData.get("date") ?? ""),
+    time: String(formData.get("time") ?? ""),
+    title: String(formData.get("title") ?? ""),
+    location: String(formData.get("location") ?? ""),
+    notes: String(formData.get("notes") ?? ""),
+  };
+}
+
 export async function addItineraryItem(
   _prev: ItineraryFormState,
   formData: FormData,
@@ -21,13 +31,7 @@ export async function addItineraryItem(
     return { status: "error", message: "Trip nggak dikenali. Muat ulang halamannya ya." };
   }
 
-  const checked = validateItineraryInput({
-    date: String(formData.get("date") ?? ""),
-    time: String(formData.get("time") ?? ""),
-    title: String(formData.get("title") ?? ""),
-    location: String(formData.get("location") ?? ""),
-    notes: String(formData.get("notes") ?? ""),
-  });
+  const checked = validateItineraryInput(inputFromForm(formData));
   if (!checked.ok) return { status: "error", message: checked.error };
 
   const supabase = await createClient();
@@ -56,6 +60,48 @@ export async function addItineraryItem(
 
   if (error) {
     return { status: "error", message: "Gagal simpan agenda. Coba lagi sebentar ya." };
+  }
+
+  revalidatePath(`/trips/${tripId}`);
+  return { status: "ok" };
+}
+
+export async function updateItineraryItem(
+  _prev: ItineraryFormState,
+  formData: FormData,
+): Promise<ItineraryFormState> {
+  const tripId = String(formData.get("tripId") ?? "");
+  const itemId = String(formData.get("itemId") ?? "");
+  if (tripId === "" || itemId === "") {
+    return { status: "error", message: "Agenda nggak dikenali. Muat ulang halamannya ya." };
+  }
+
+  const checked = validateItineraryInput(inputFromForm(formData));
+  if (!checked.ok) return { status: "error", message: checked.error };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { status: "error", message: "Sesi kamu udah habis. Masuk lagi ya." };
+  }
+
+  // RLS `itinerary_update_member` menolak bila bukan anggota trip.
+  const { error } = await supabase
+    .from("itinerary_items")
+    .update({
+      date: checked.value.date,
+      time: checked.value.time,
+      title: checked.value.title,
+      location: checked.value.location === "" ? null : checked.value.location,
+      notes: checked.value.notes === "" ? null : checked.value.notes,
+    })
+    .eq("id", itemId)
+    .eq("trip_id", tripId);
+
+  if (error) {
+    return { status: "error", message: "Gagal ubah agenda. Coba lagi sebentar ya." };
   }
 
   revalidatePath(`/trips/${tripId}`);
