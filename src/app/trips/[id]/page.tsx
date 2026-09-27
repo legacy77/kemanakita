@@ -183,7 +183,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-4 py-6 pb-16">
-      <header className="rpg-panel-sky relative flex flex-col gap-1 rounded-lg p-4">
+      <header className="rpg-panel-sky rpg-corner relative flex flex-col gap-1 rounded-lg p-4">
         <Link
           href="/trips"
           className="w-fit text-[14px] font-semibold text-white/90 underline underline-offset-4"
@@ -345,10 +345,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
                     const category = CATEGORY_BY_KEY.get(expense.category);
                     const splits = splitsByExpense.get(expense.id) ?? [];
                     return (
-                        <li
-                          key={expense.id}
-                          className="rpg-panel p-4"
-                        >
+                      <li key={expense.id} className="rpg-panel p-4">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <p className="text-[15px] leading-[21px] font-semibold text-fg">

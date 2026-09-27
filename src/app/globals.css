@@ -324,7 +324,7 @@
 
   /* Panel dengan header langit bergradasi (kartu quest). */
   .rpg-panel-sky {
-    background: linear-gradient(180deg, var(--sky-400) 0%, var(--sky-600) 100%);
+    background: linear-gradient(180deg, var(--sky-700) 0%, var(--sky-800) 100%);
     border: 2px solid var(--sky-800);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-panel-sky);

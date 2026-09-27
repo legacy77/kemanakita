@@ -119,7 +119,7 @@ export default async function JoinPage({
 
   return (
     <Shell>
-      <p className="text-[13px] leading-5 font-medium tracking-[0.01em] text-slate-500">
+      <p className="text-[13px] leading-5 font-medium tracking-[0.01em] text-ink-600">
         Kamu diundang ke
       </p>
       <h1 className="font-display text-[26px] leading-8 font-bold text-fg">

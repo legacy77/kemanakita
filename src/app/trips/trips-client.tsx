@@ -55,7 +55,7 @@ export function TripsPageClient({
       <header className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <span className="rpg-ribbon mb-1">🧭 Party Kamu</span>
-          <p className="text-[12px] font-medium tracking-[0.01em] text-ink-500">
+          <p className="text-[12px] font-medium tracking-[0.01em] text-ink-600">
             Halo, {name === "" ? "teman jalan" : name}! 👋
           </p>
           <h1 className="font-display truncate text-[26px] leading-8 font-extrabold text-action">
@@ -92,7 +92,7 @@ export function TripsPageClient({
                   <h2 className="font-display truncate text-[20px] leading-[26px] font-semibold text-fg">
                     {trip.title}
                   </h2>
-                  <p className="mt-1 flex items-center gap-1 text-[12px] leading-4 font-medium text-slate-500">
+                  <p className="mt-1 flex items-center gap-1 text-[12px] leading-4 font-medium text-ink-600">
                     <span aria-hidden>📍</span>
                     <span className="truncate">
                       {trip.destination === null || trip.destination === ""
@@ -210,7 +210,7 @@ export function TripsPageClient({
         )}
       </section>
 
-      <footer className="text-center text-[12px] leading-4 text-slate-500">
+      <footer className="text-center text-[12px] leading-4 text-ink-600">
         Masuk sebagai {email}
         <span className="mx-2" aria-hidden>
           ·
@@ -219,7 +219,7 @@ export function TripsPageClient({
         <Link href="/join" className="font-semibold text-action underline underline-offset-4">
           Gabung trip
         </Link>
-        <label className="mt-3 flex items-center justify-center gap-2 text-[13px] text-slate-500">
+        <label className="mt-3 flex items-center justify-center gap-2 text-[13px] text-ink-600">
           Nama tampilan:
           <input
             value={name}

@@ -34,7 +34,7 @@ export default async function Home() {
         >
           ▶ Mulai Petualangan
         </Link>
-        <p className="text-center text-[12px] leading-4 text-ink-500">
+        <p className="text-center text-[12px] leading-4 text-ink-600">
           Daftar sekali dengan nama + email, langsung dapat PIN 6 digit.
         </p>
       </div>
