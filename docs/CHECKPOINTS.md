@@ -18,37 +18,39 @@
   `git add -A && git commit -m "..." && git push`.
 - Gate: build exit 0.
 
-## CP1 — Realtime trip (T1)
-- Migrasi: `alter publication supabase_realtime add table public.trip_members;`
-  (idempoten, pola DO block seperti migrasi awal). Jalankan via SQL Editor.
-- Kode: komponen `<TripRealtime tripId>` client — 1 channel per trip
-  (`trip:${tripId}`), subscribe postgres_changes ke `itinerary_items`,
-  `expenses`, `expense_splits`, `trip_members` (filter `trip_id=eq.${tripId}`),
-  `router.refresh()` debounce ~400ms, cleanup `removeChannel`.
-  TDD: test debounce/coalesce dulu.
-- Pasang di `src/app/trips/[id]/page.tsx` (server component → render
-  `<TripRealtime>` client di dalam).
-- Scope: tidak ubah RLS, tidak ubah skema selain publikasi.
-- Verifikasi: unit test debounce; manual 2 tab browser (edit tab A → tab B refresh).
-- Review: tunjukkan file komponen + test + screenshot/gif 2 tab.
+## CP1 — Realtime trip (T1) [KODE SELESAI, MENUNGGU REVIEW + MIGRASI DB]
+- Migrasi: `supabase/migrations/20260929000000_realtime_trip_members.sql` (baru) —
+  DO block idempoten, tambah HANYA `public.trip_members` ke `supabase_realtime`.
+  BELUM dijalankan di DB live (butuh user paste di SQL Editor).
+- Kode:
+  - `src/lib/realtime.ts` — helper `debounce(fn, delayMs)` + `.cancel()`.
+  - `src/lib/realtime.test.ts` — 3 test (coalesce jadi 1, terpisah jadi 2, cancel).
+  - `src/app/trips/[id]/trip-realtime.tsx` — client, 1 channel `trip:${tripId}`,
+    subscribe `itinerary_items`/`expenses`/`trip_members` (filter per-trip) +
+    `expense_splits` (tanpa filter; tabel tak punya `trip_id`), `router.refresh()`
+    debounce 400ms, cleanup `cancel()` + `removeChannel`.
+  - `src/app/trips/[id]/page.tsx` — render `<TripRealtime tripId={tripId} />`.
+- Verifikasi: test 130 pass (127 + 3 baru); tsc exit 0; lint/build menyusul.
+- Aksi user: (a) jalankan migrasi di Supabase SQL Editor; (b) manual 2 tab browser:
+  edit agenda di tab A → tab B auto-refresh.
+- Review: file komponen + test di atas.
 
-## CP2 — Reset PIN admin manual (T2, Opsi 2 — KEPUTUSAN FINAL)
+## CP2 — Reset PIN admin manual (T2, Opsi 2 — KEPUTUSAN FINAL) [SELESAI]
 - Status: SELESAI. `docs/admin-reset-pin.md` ada (langkah dashboard Auth → Users
   → update password 6 digit, kirim via WhatsApp). `login-form.tsx:152` sudah
   copy "Hubungi admin lewat grup trip buat minta reset PIN".
 - Tidak ada kode. Tidak ada tabel `pin_reset_tokens`, tidak ada `/reset-pin`,
   tidak butuh SERVICE_KEY / email provider.
-- Verifikasi: baca ulang doc 1 menit.
 
-## CP3 — Ikon PNG + polish render (T3)
-- Buat `public/icons/icon-192.png` + `icon-512.png` (SVG saja kurang untuk
-  install prompt Android), daftarkan di `src/app/manifest.ts`.
-- Tool: tidak ada ImageMagick/Inkscape di mesin ini; `sharp` tersedia sebagai
-  transitive dep (bukan direct). Opsi: script node sekali-pakai pakai `sharp`
-  dari node_modules, atau generate via browser/canvas sekali lalu commit PNG.
-- Lalu: `node scripts/check-contrast.mjs`, render 360px, dark mode.
-- Verifikasi: manifest serve PNG; lighthouse/PWA installability; screenshot 360px.
-- Review: tunjukkan PNG + manifest diff + screenshot.
+## CP3 — Ikon PNG + polish render (T3) [KODE SELESAI, MENUNGGU REVIEW]
+- Baru: `public/icons/icon-192.png` (192x192, 5058 B), `icon-512.png`
+  (512x512, 16832 B), `maskable-512.png` (512x512, 21757 B) — diraster dari
+  SVG via `sharp` (density 384); script temporer sudah dihapus.
+- `src/app/manifest.ts` — tambah 3 entri PNG (SVG dipertahankan).
+- Verifikasi: tsc exit 0; ikon dirender & diperiksa visual (tidak rusak).
+- Sisa: render 360px + dark mode (bagian CP4 manual).
+- Review: PNG di atas + diff manifest.
+
 
 ## CP4 — E2E manual + commit/push + deploy (T4+T5)
 - E2E 2 akun: buat trip → invite → join → itinerary → 3 expense → settlement

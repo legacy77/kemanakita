@@ -26,6 +26,7 @@ import { EditExpenseForm } from "./edit-expense-form";
 import { RemoveMemberButton } from "./remove-member-button";
 import { SettlementButton } from "./settlement-button";
 import { TabNav } from "./tab-nav";
+import TripRealtime from "./trip-realtime";
 
 // Detail trip (PRD §4.2–§4.5, §6.3): hanya anggota yang bisa buka.
 // Non-member diarahkan ke /join dengan kode terisi, sesuai gaya PRD §5.2.
@@ -208,6 +209,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
       </header>
 
       <TabNav tripId={tripId} active={tab} />
+      <TripRealtime tripId={tripId} />
 
       {tab === "itinerary" && (
         <section className="flex flex-col gap-4">
