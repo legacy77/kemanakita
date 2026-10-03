@@ -45,6 +45,9 @@ yarn-error.log*
 supabase/.branches/
 supabase/.temp/
 
+# opencode agents (local-only, jangan push ke GitHub)
+.opencode/
+
 # editor
 .vscode/*
 !.vscode/extensions.json
