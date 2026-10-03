@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">KemanaKita</title>
+  <desc id="desc">Pin lokasi berbentuk tas dengan huruf K</desc>
+  <path fill="#1668D6" d="M256 32c-105.9 0-192 86.1-192 192 0 136.7 171.2 240.5 184.9 248.7a13.9 13.9 0 0 0 14.2 0C276.8 464.5 448 360.7 448 224 448 118.1 361.9 32 256 32Z"/>
+  <path fill="#FFF5D6" d="M149 178a25 25 0 0 1 25-25h164a25 25 0 0 1 25 25v145a25 25 0 0 1-25 25H174a25 25 0 0 1-25-25V178Z"/>
+  <path fill="none" stroke="#D99400" stroke-linecap="round" stroke-linejoin="round" stroke-width="22" d="M204 174v151m0-76 91-75m-91 75 99 76M206 174c3-37 22-58 50-58s47 21 50 58"/>
+  <path fill="#D99400" d="M173 188h166v24H173z"/>
+</svg>

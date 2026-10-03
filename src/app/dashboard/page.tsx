@@ -223,7 +223,7 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      {/* Kartu 3: saran pelunasan (tampilan saja, tanpa tombol) */}
+      {/* Kartu 3: saran pelunasan */}
       <section className="rpg-panel p-4">
         <h2 className="font-display text-[17px] leading-[22px] font-semibold text-fg">
           Saran pelunasan
@@ -250,6 +250,13 @@ export default async function DashboardPage() {
                     {s.tripTitle}
                   </span>
                 </p>
+                <Link
+                  href={`/trips/${s.tripId}?tab=keuangan`}
+                  aria-label={`Bayar di trip ${s.tripTitle}: ${displayName(s.from)} ke ${displayName(s.to)} ${formatRupiah(s.amount)} — buka tab Keuangan`}
+                  className="shrink-0 text-[13px] font-semibold text-action underline underline-offset-4"
+                >
+                  Bayar di trip →
+                </Link>
               </li>
             ))}
           </ul>

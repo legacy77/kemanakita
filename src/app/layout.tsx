@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { M_PLUS_Rounded_1c, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { MobileNavShell } from "./mobile-nav";
@@ -22,6 +22,28 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "KemanaKita",
   description: "Rencana bareng, jalan bareng.",
+  applicationName: "KemanaKita",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/icons/icon.svg", type: "image/svg+xml" }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "KemanaKita",
+    statusBarStyle: "default",
+  },
+};
+
+// PWA: lebar device (bukan viewport terkunci — tanpa maximum-scale /
+// user-scalable=no, agar zoom tetap tersedia demi aksesibilitas).
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FFFCF4" },
+    { media: "(prefers-color-scheme: dark)", color: "#101A2E" },
+  ],
 };
 
 export default function RootLayout({

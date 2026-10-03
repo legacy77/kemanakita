@@ -23,12 +23,12 @@ export function DisplayNameForm({ initialName }: { initialName: string }) {
           maxLength={80}
           required
           placeholder="Nama kamu"
-          className="h-9 w-40 rounded-md border border-border bg-surface px-2 text-[14px] text-fg outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
+          className="h-11 w-40 rounded-md border border-border bg-surface px-2 text-[16px] text-fg outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/25"
         />
         <button
           type="submit"
           disabled={pending}
-          className="h-9 shrink-0 rounded-md border-2 border-action px-3 text-[13px] font-semibold text-action transition-colors hover:bg-sky-100 disabled:opacity-60"
+          className="h-11 shrink-0 rounded-md border-2 border-action px-3 text-[13px] font-semibold text-action transition-colors hover:bg-sky-100 disabled:opacity-60"
         >
           {pending ? "Menyimpan…" : "Simpan"}
         </button>

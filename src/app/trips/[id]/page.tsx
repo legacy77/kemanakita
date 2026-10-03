@@ -179,7 +179,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
       <header className="rpg-panel-sky rpg-corner relative flex flex-col gap-1 rounded-lg p-4">
         <Link
           href="/trips"
-          className="w-fit text-[14px] font-semibold text-white/90 underline underline-offset-4"
+          className="w-fit text-[14px] font-semibold text-white underline underline-offset-4"
         >
           ← Semua trip
         </Link>
@@ -187,7 +187,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
         <h1 className="font-display text-[26px] leading-8 font-extrabold text-white drop-shadow-[0_2px_0_rgba(14,37,73,0.35)]">
           {trip.title}
         </h1>
-        <p className="flex items-center gap-1 text-[14px] leading-5 text-white/90">
+        <p className="flex items-center gap-1 text-[14px] leading-5 text-white">
           <span aria-hidden>📍</span>
           <span>
             {trip.destination === null || trip.destination === ""
@@ -196,7 +196,7 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
             · {formatTripDate(trip.start_date)} – {formatTripDate(trip.end_date)}
           </span>
         </p>
-        <p className="text-[13px] leading-5 text-white/80">
+        <p className="text-[13px] leading-5 text-sky-100">
           {tripDayCount} hari · {memberCount} anggota · Total {formatRupiah(tripTotal)}
         </p>
         <Link
@@ -409,9 +409,15 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
               )}
 
               {settlementRows.length > 0 && (
-                <details className="rpg-panel">
-                  <summary className="cursor-pointer list-none px-4 py-3 text-[15px] font-semibold text-action">
-                    ✅ Sudah diselesaikan ({settlementRows.length})
+                <details className="rpg-panel group">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-[15px] font-semibold text-action [&::-webkit-details-marker]:hidden">
+                    <span>✅ Sudah diselesaikan ({settlementRows.length})</span>
+                    <span
+                      aria-hidden
+                      className="inline-block text-[14px] transition-transform group-open:rotate-180"
+                    >
+                      ▾
+                    </span>
                   </summary>
                   <ul className="flex flex-col gap-2 border-t border-border p-4">
                     {settlementRows.map((expense) => {
@@ -443,13 +449,23 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
             </>
           )}
 
-          <AddExpenseForm
-            tripId={tripId}
-            tripDate={trip.start_date}
-            memberIds={memberIds}
-            displayNames={Object.fromEntries(memberIds.map((id) => [id, displayName(id)]))}
-            currentUserId={user.id}
-          />
+          <div id="tambah-pengeluaran" className="scroll-mt-6">
+            <AddExpenseForm
+              tripId={tripId}
+              tripDate={trip.start_date}
+              memberIds={memberIds}
+              displayNames={Object.fromEntries(memberIds.map((id) => [id, displayName(id)]))}
+              currentUserId={user.id}
+            />
+          </div>
+          <Link
+            href="#tambah-pengeluaran"
+            className="rpg-btn fixed right-4 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 flex h-14 min-w-14 items-center justify-center gap-1 rounded-full border-2 border-gold-700 bg-gold-300 px-4 text-[14px] font-bold text-ink-900 shadow-md transition-colors hover:bg-gold-400 md:bottom-6"
+            aria-label="Ke form tambah pengeluaran"
+          >
+            <span aria-hidden className="text-[22px] leading-none">+</span>
+            Pengeluaran
+          </Link>
         </section>
       )}
 

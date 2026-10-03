@@ -60,7 +60,10 @@ export function TripsPageClient({
           <p className="text-[12px] font-medium tracking-[0.01em] text-ink-600">
             Halo, {userName === "" ? "teman jalan" : userName}! 👋
           </p>
-          <h1 className="font-display truncate text-[26px] leading-8 font-extrabold text-action">
+          <h1
+            title="Trip kamu"
+            className="font-display truncate text-[26px] leading-8 font-extrabold text-action"
+          >
             Trip kamu
           </h1>
         </div>
@@ -94,12 +97,18 @@ export function TripsPageClient({
             <li key={trip.id} className="rpg-panel p-4">
               <div className="flex items-start justify-between gap-3">
                 <Link href={`/trips/${trip.id}`} className="min-w-0 flex-1">
-                  <h2 className="font-display truncate text-[20px] leading-[26px] font-semibold text-fg">
+                  <h2
+                    title={trip.title}
+                    className="font-display truncate text-[20px] leading-[26px] font-semibold text-fg"
+                  >
                     {trip.title}
                   </h2>
                   <p className="mt-1 flex items-center gap-1 text-[12px] leading-4 font-medium text-ink-600">
                     <span aria-hidden>📍</span>
-                    <span className="truncate">
+                    <span
+                      title={`${trip.destination === null || trip.destination === "" ? "Destinasi belum diisi" : trip.destination}${trip.dateLabel === "" ? "" : ` · ${trip.dateLabel}`}`}
+                      className="truncate"
+                    >
                       {trip.destination === null || trip.destination === ""
                         ? "Destinasi belum diisi"
                         : trip.destination}
@@ -113,24 +122,26 @@ export function TripsPageClient({
                   </span>
                 )}
               </div>
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
                 <Link
                   href={`/trips/${trip.id}`}
                   className="rpg-btn flex h-11 flex-1 items-center justify-center rounded-md bg-action px-4 text-[15px] font-semibold text-white transition-colors hover:bg-action-hover"
                 >
                   Buka trip
                 </Link>
-                <button
-                  type="button"
-                  onClick={() => copyInvite(trip.inviteCode)}
-                  className="rpg-btn flex h-11 shrink-0 items-center gap-1 rounded-md border-2 border-sky-600 px-3 text-[14px] font-bold text-action"
-                  aria-label={`Salin tautan undangan ${trip.title}`}
-                >
-                  {copied === trip.inviteCode ? "✅ Tersalin!" : "🔗 Undang"}
-                </button>
-                {trip.role === "owner" && (
-                  <DeleteTripButton tripId={trip.id} tripTitle={trip.title} />
-                )}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => copyInvite(trip.inviteCode)}
+                    className="rpg-btn flex h-11 flex-1 shrink-0 items-center justify-center gap-1 rounded-md border-2 border-sky-600 px-3 text-[14px] font-bold text-action"
+                    aria-label={`Salin tautan undangan ${trip.title}`}
+                  >
+                    {copied === trip.inviteCode ? "✅ Tersalin!" : "🔗 Undang"}
+                  </button>
+                  {trip.role === "owner" && (
+                    <DeleteTripButton tripId={trip.id} tripTitle={trip.title} />
+                  )}
+                </div>
               </div>
             </li>
           ))}

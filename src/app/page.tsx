@@ -18,7 +18,7 @@ export default async function Home() {
     <main className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-12">
       <div className="rpg-panel relative w-full max-w-md overflow-hidden p-6 text-center">
         <span className="rpg-ribbon mx-auto mb-3">⚔️ Petualangan Bareng</span>
-        <h1 className="font-display text-[34px] leading-[40px] font-extrabold tracking-[-0.01em] text-action drop-shadow-[0_2px_0_rgba(255,255,255,0.6)]">
+        <h1 className="font-display text-[32px] leading-[38px] font-extrabold tracking-[-0.02em] text-action drop-shadow-[0_2px_0_rgba(255,255,255,0.6)]">
           KemanaKita
         </h1>
         <p className="mt-2 text-[15px] leading-[22px] text-fg-muted">

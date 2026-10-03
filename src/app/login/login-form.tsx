@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import {
   createPinAccount,
   signInWithPin,
@@ -23,6 +23,19 @@ type Tab = "masuk" | "daftar";
 
 export function LoginForm({ next, initialError }: { next: string; initialError?: string }) {
   const [tab, setTab] = useState<Tab>("masuk");
+  const order: Tab[] = ["masuk", "daftar"];
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  function focusTab(index: number) {
+    tabRefs.current[((index % order.length) + order.length) % order.length]?.focus();
+  }
+
+  function onTabKeyDown(key: string, index: number) {
+    if (key === "ArrowRight") focusTab(index + 1);
+    else if (key === "ArrowLeft") focusTab(index - 1);
+    else if (key === "Home") focusTab(0);
+    else if (key === "End") focusTab(order.length - 1);
+  }
 
   // Dua action terpisah: "Masuk" pakai PIN, "Daftar" bikin akun + PIN.
   const [loginState, loginAction, loginPending] = useActionState(
@@ -61,15 +74,22 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
         aria-label="Pilih masuk atau daftar"
         className="grid grid-cols-2 gap-1 rounded-md border-2 border-border-strong bg-parch-200 p-1"
       >
-        {(["masuk", "daftar"] as const).map((key) => (
+        {order.map((key, index) => (
           <button
             key={key}
+            ref={(el) => {
+              tabRefs.current[index] = el;
+            }}
+            id={`tab-${key}`}
             type="button"
             role="tab"
             aria-selected={tab === key}
+            aria-controls={`panel-${key}`}
+            tabIndex={tab === key ? 0 : -1}
             onClick={() => setTab(key)}
+            onKeyDown={(e) => onTabKeyDown(e.key, index)}
             className={
-              "h-10 rounded-[8px] text-[14px] font-bold transition-colors " +
+              "h-12 rounded-[8px] text-[14px] font-bold transition-colors " +
               (tab === key
                 ? "bg-action text-white shadow-sm"
                 : "text-ink-600 hover:text-ink-900")
@@ -81,7 +101,14 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
       </div>
 
       {tab === "masuk" ? (
-        <form key="masuk" action={loginAction} className="flex flex-col gap-4">
+        <form
+          key="masuk"
+          id="panel-masuk"
+          role="tabpanel"
+          aria-labelledby="tab-masuk"
+          action={loginAction}
+          className="flex flex-col gap-4"
+        >
           <input type="hidden" name="next" value={next} />
 
           <label className={LABEL_CLASS}>
@@ -94,6 +121,8 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
               inputMode="email"
               defaultValue={prefillEmail}
               placeholder="kamu@email.com"
+              aria-invalid={state.status === "error"}
+              aria-describedby={state.status === "error" ? "login-error" : undefined}
               className={INPUT_CLASS}
             />
           </label>
@@ -109,6 +138,8 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
               pattern="\d{6}"
               maxLength={6}
               placeholder="••••••"
+              aria-invalid={state.status === "error"}
+              aria-describedby={state.status === "error" ? "login-error" : undefined}
               className={INPUT_CLASS}
             />
           </label>
@@ -118,11 +149,18 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
           </button>
 
           <p className="text-center text-[13px] text-fg-muted">
-            Lupa PIN? Minta admin reset ya.
+            Lupa PIN? Hubungi admin lewat grup trip buat minta reset PIN, ya.
           </p>
         </form>
       ) : (
-        <form key="daftar" action={registerAction} className="flex flex-col gap-4">
+        <form
+          key="daftar"
+          id="panel-daftar"
+          role="tabpanel"
+          aria-labelledby="tab-daftar"
+          action={registerAction}
+          className="flex flex-col gap-4"
+        >
           <label className={LABEL_CLASS}>
             Nama
             <input
@@ -132,6 +170,8 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
               autoComplete="name"
               maxLength={80}
               placeholder="Misalnya: Dhika"
+              aria-invalid={state.status === "error"}
+              aria-describedby={state.status === "error" ? "login-error" : undefined}
               className={INPUT_CLASS}
             />
           </label>
@@ -145,6 +185,8 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
               autoComplete="email"
               inputMode="email"
               placeholder="kamu@email.com"
+              aria-invalid={state.status === "error"}
+              aria-describedby={state.status === "error" ? "login-error" : undefined}
               className={INPUT_CLASS}
             />
           </label>
@@ -161,6 +203,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
 
       {tab === "masuk" && initialError && state.status === "idle" && (
         <p
+          id="login-error"
           role="alert"
           className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger-bg px-3 py-3 text-[14px] text-danger"
         >
@@ -171,6 +214,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
 
       {state.status === "error" && (
         <p
+          id="login-error"
           role="alert"
           className="flex items-start gap-2 rounded-md border border-danger/30 bg-danger-bg px-3 py-3 text-[14px] text-danger"
         >
