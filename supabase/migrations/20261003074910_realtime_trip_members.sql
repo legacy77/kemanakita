@@ -1,7 +1,8 @@
 -- ============================================================
 -- KemanaKita — Realtime: masukkan trip_members ke publikasi
 -- Rujukan: docs/PRD.md §7.1, docs/RESUME_NEXT.md (kajian oracle T1)
--- CARA PAKAI: paste di SQL Editor → Run.
+-- CARA PAKAI: sudah diterapkan ke DB live via migrasi (2026-10-03),
+-- tercatat di ledger remote sebagai 20261003074910_realtime_trip_members.
 -- Idempoten: aman dijalankan ulang.
 -- ============================================================
 -- Kenapa file ini ada:

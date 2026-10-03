@@ -18,10 +18,14 @@
   `git add -A && git commit -m "..." && git push`.
 - Gate: build exit 0.
 
-## CP1 — Realtime trip (T1) [KODE TER-PUSH, MENUNGGU MIGRASI DB + UJI MANUAL]
-- Migrasi: `supabase/migrations/20260929000000_realtime_trip_members.sql` (baru) —
+## CP1 — Realtime trip (T1) [MIGRASI LIVE SELESAI, MENUNGGU UJI MANUAL 2 TAB]
+- Migrasi: `supabase/migrations/20261003074910_realtime_trip_members.sql` —
   DO block idempoten, tambah HANYA `public.trip_members` ke `supabase_realtime`.
-  BELUM dijalankan di DB live (butuh user paste di SQL Editor).
+  SUDAH dijalankan di DB live 2026-10-03 (via tool migrasi, tercatat di ledger
+  sebagai `20261003074910_realtime_trip_members`); verifikasi via
+  `pg_publication_tables`: publikasi kini berisi `expense_splits`, `expenses`,
+  `itinerary_items`, `trip_members`. Nama file lokal diselaraskan dari
+  `20260929000000_*` agar sama dengan versi ledger.
 - Kode:
   - `src/lib/realtime.ts` — helper `debounce(fn, delayMs)` + `.cancel()`.
   - `src/lib/realtime.test.ts` — 3 test (coalesce jadi 1, terpisah jadi 2, cancel).

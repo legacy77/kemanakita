@@ -5,7 +5,7 @@
 
 ## Prioritas — 2026-10-03 (PM)
 
-> State: M0 100%. **147 test hijau.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). Nav bawah mobile (`Dashboard | Trip | Gabung | Keluar`) + audit kontras token kanonik (skrip `check-contrast.mjs` sudah token baru, exit 0). `addExpense`/`markSettled` pakai id pra-generate; `deleteTrip` cek error + baris terhapus (flash `delete-error`); `deleteExpense` cek count exact. M1 migrasi init DIKLAIM jalan di `.superpowers/sdd/mvp/progress.md` — belum diverifikasi ulang di sesi ini; project/env mungkin ada, gate RLS tetap terbuka. Realtime: kode ter-push (commit `0b4dc53`), migrasi `20260929000000_realtime_trip_members.sql` BELUM live + uji 2 tab belum. M5 primitives kode selesai commit `10c13f3`, uji browser belum. Reset PIN admin manual `docs/admin-reset-pin.md` selesai. E2E 2 akun, HP asli, deploy, backup tetap terbuka. Guest-mode tunda (PRD §4.6).
+> State: M0 100%. **147 test hijau.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). Nav bawah mobile (`Dashboard | Trip | Gabung | Keluar`) + audit kontras token kanonik (skrip `check-contrast.mjs` sudah token baru, exit 0). `addExpense`/`markSettled` pakai id pra-generate; `deleteTrip` cek error + baris terhapus (flash `delete-error`); `deleteExpense` cek count exact. M1 migrasi init DIKLAIM jalan di `.superpowers/sdd/mvp/progress.md` — belum diverifikasi ulang di sesi ini; project/env mungkin ada, gate RLS tetap terbuka. Realtime: kode ter-push (commit `0b4dc53`), migrasi `20261003074910_realtime_trip_members.sql` SUDAH live (2026-10-03, terverifikasi `pg_publication_tables`) — uji 2 tab manual masih belum. M5 primitives kode selesai commit `10c13f3`, uji browser belum. Reset PIN admin manual `docs/admin-reset-pin.md` selesai. E2E 2 akun, HP asli, deploy, backup tetap terbuka. Guest-mode tunda (PRD §4.6).
 > Aturan gate: status "kode selesai" dibedakan dari "gate runtime/manual". Kode selesai = implementasi ada di tree/commit. Gate tertunda = butuh DB live / aksi manual / uji browser; gate tertunda tidak membatalkan status kode, dan kode selesai tidak menutup gate.
 
 ### Arti label
@@ -28,7 +28,7 @@
 | P1-1 | M3: tab Itinerary + CRUD + validasi inline + empty state | kode selesai / gate manual tertunda; bottom-sheet HP / modal desktop belum terbukti (tetap terbuka) | Goal PRD §1.2 #1; dependensi: halaman trip M2 |
 | P1-2 | M4: CRUD expense + aturan hapus + tab Keuangan + "Tandai lunas" + FAB | kode selesai (FAB + collapsed ada) / E2E 3-expense manual terbuka | Goal PRD §1.2 #2; core value app |
 | P1-3 | M2 error states: kode salah + non-member redirect | kode selesai / gate manual ikut P0-3 | PRD §5.2; kecil, kerjakan bareng P0-3 |
-| P1-4 | M3: realtime edit bareng | kode selesai / migrasi `20260929000000` belum live + uji 2 tab belum | Kolaborasi PRD §4.3; stabilkan CRUD dulu |
+| P1-4 | M3: realtime edit bareng | kode selesai + migrasi live (`20261003074910`) / uji 2 tab manual belum | Kolaborasi PRD §4.3; stabilkan CRUD dulu |
 
 ### P2 — Polish & rilis (terakhir)
 
@@ -41,7 +41,7 @@
 ### 3 langkah berikutnya (paling bernilai)
 
 1. **Verifikasi ulang M1 di DB live** (env + migrasi init + RLS member vs non-member). Tanpa ini gate M1 tetap merah. (P0-1 → P0-2)
-2. **Jalankan migrasi realtime di SQL Editor + uji 2 tab manual**, lalu E2E 2 akun penuh (buat trip → invite → join → itinerary → 3 expense → saran benar → tandai lunas). (P1-4 → P0-3/E2E)
+2. **Uji 2 tab manual (realtime sudah live)**, lalu E2E 2 akun penuh (buat trip → invite → join → itinerary → 3 expense → saran benar → tandai lunas). (P1-4 → P0-3/E2E)
 3. **Uji browser manual M5** (buka modal, Tab/Esc, toast 3 dtk) + render 360px; jangan centang checklist §12 sebelum ini. (P2-1 → P2-2)
 
 ## M0 — Keputusan & setup
@@ -78,7 +78,7 @@
 - [x] CRUD item (jam, judul, lokasi, catatan); semua member bisa edit — kode selesai (`itinerary-actions.ts`, `edit-itinerary-form.tsx`, `delete-buttons.tsx`), verifikasi runtime belum
 - [ ] Bottom-sheet form di HP, modal tengah di desktop; validasi inline tanpa reload — belum terbukti, tetap terbuka
 - [x] Validasi input itinerary (judul wajib, tanggal kalender sah, jam format HH:MM) — **2026-09-27** `src/lib/validate.ts` (`validateItineraryInput`); **7 test hijau**
-- [ ] Realtime Supabase untuk edit bareng — kode ada (`trip-realtime.tsx` + `realtime.ts`), migrasi `20260929000000` belum live + uji 2 tab belum
+- [ ] Realtime Supabase untuk edit bareng — kode ada (`trip-realtime.tsx` + `realtime.ts`), migrasi `20261003074910` sudah live (2026-10-03) + uji 2 tab belum
 - [x] Empty state per hari + halaman ("Belum ada agenda di hari ini" / "Belum ada pengeluaran…") — kode selesai
 - [ ] Gate: tambah/ubah/hapus tanpa error, urutan benar
 
