@@ -59,6 +59,7 @@
 - [ ] RLS: hanya member baca/tulis trip-nya; owner hapus trip / kick (§7.4)
 - [ ] Test RLS: member vs non-member
 - [ ] Gate: migrasi bersih + RLS test hijau
+- [x] Hardening SECURITY DEFINER: helper RLS (`is_trip_member`/`is_trip_owner`/`has_other_owner`) pindah ke schema `private` + EXECUTE fungsi trigger dicabut; `get_trip_by_invite` tetap publik disengaja — migrasi `20261003081856_harden_security_definer.sql` live 2026-10-03, RLS terverifikasi (owner lihat 1 trip, anon 0)
 
 ## M2 — Auth + trip + undangan (PRD §4.1–4.3, §5)
 

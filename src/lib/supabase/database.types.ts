@@ -1,7 +1,11 @@
 // Tipe DB — bentuk mengikuti output `supabase gen types typescript`.
-// Diperluas manual agar cocok dengan skema di
-// `supabase/migrations/20260926000000_init.sql` + `20260927000000_owner_trigger.sql`.
+// Diperluas manual agar cocok dengan skema di `supabase/migrations/`:
+// `20260926000000_init.sql`, `20260927000000_owner_trigger.sql`,
+// `20260928000000_itinerary_category.sql`, `20261003074910_realtime_trip_members.sql`,
+// `20261003081856_harden_security_definer.sql`.
 // Regenerasi saat skema berubah; JANGAN ubah nama kolom sembarangan.
+// Catatan: helper RLS `is_trip_member`/`is_trip_owner`/`has_other_owner` kini
+// di schema `private` (tidak diekspos PostgREST) — sengaja TIDAK ada di sini.
 
 export type TripRole = "owner" | "member";
 
@@ -175,18 +179,6 @@ export interface Database {
     };
     Views: Record<string, never>;
     Functions: {
-      is_trip_member: {
-        Args: { p_trip_id: string; p_user_id: string };
-        Returns: boolean;
-      };
-      is_trip_owner: {
-        Args: { p_trip_id: string; p_user_id: string };
-        Returns: boolean;
-      };
-      has_other_owner: {
-        Args: { p_trip_id: string; p_user_id: string };
-        Returns: boolean;
-      };
       get_trip_by_invite: {
         Args: { p_code: string };
         Returns: {

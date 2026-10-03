@@ -72,6 +72,22 @@
   build exit 0. Commit `10c13f3` (`0b4dc53..10c13f3` di origin/main).
 - Sisa: uji interaksi browser manual (buka modal, Tab/Esc, toast 3 dtk) — bagian CP4.
 
+## CP5b — Hardening SECURITY DEFINER (advisor Supabase 0028/0029) [LIVE, TER-VERIFIKASI]
+- Migrasi: `supabase/migrations/20261003081856_harden_security_definer.sql` —
+  helper RLS (`is_trip_member`/`is_trip_owner`/`has_other_owner`) pindah ke schema
+  `private` (tak diekspos PostgREST) + EXECUTE fungsi trigger
+  (`handle_new_trip`/`handle_new_user`) dicabut. `get_trip_by_invite` tetap
+  publik disengaja (dipakai `rpc()` halaman /join sebelum login).
+  SUDAH dijalankan di DB live 2026-10-03 (tercatat di ledger).
+- Fakta yang diuji sebelum eksekusi (schema scratch, sudah di-drop):
+  revoke EXECUTE fungsi trigger aman (trigger tetap menyala); revoke helper RLS
+  memutus RLS (`permission denied`) — makanya dipindah schema, bukan dicabut.
+- Verifikasi live: advisor 0028/0029 tinggal 1 temuan tiap lint
+  (hanya `get_trip_by_invite`, disengaja); owner lihat 1 trip; anon 0 trip;
+  RPC preview undangan jalan. `database.types.ts` diselaraskan
+  (3 helper privat dihapus dari tipe).
+- Sisa: `auth_leaked_password_protection` (toggle dashboard Auth, aksi manual user).
+
 ## CP4 — E2E manual + commit/push + deploy (T4+T5)
 - E2E 2 akun: buat trip → invite → join → itinerary → 3 expense → settlement
   → tandai lunas. Checklist deploy:
