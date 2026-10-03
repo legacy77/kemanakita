@@ -18,7 +18,7 @@
   `git add -A && git commit -m "..." && git push`.
 - Gate: build exit 0.
 
-## CP1 — Realtime trip (T1) [KODE SELESAI, MENUNGGU REVIEW + MIGRASI DB]
+## CP1 — Realtime trip (T1) [KODE TER-PUSH, MENUNGGU MIGRASI DB + UJI MANUAL]
 - Migrasi: `supabase/migrations/20260929000000_realtime_trip_members.sql` (baru) —
   DO block idempoten, tambah HANYA `public.trip_members` ke `supabase_realtime`.
   BELUM dijalankan di DB live (butuh user paste di SQL Editor).
@@ -51,6 +51,22 @@
 - Sisa: render 360px + dark mode (bagian CP4 manual).
 - Review: PNG di atas + diff manifest.
 
+
+## CP5 — M5 primitives: skeleton, toast 3 dtk, modal konfirmasi (#8) [SELESAI, TER-PUSH]
+- Logika murni + test: `src/lib/toast.ts` (add/cap 3/remove/prune TTL 3000ms),
+  `src/lib/focus-trap.ts` (trapTabIndex, keyToFocusIndex) — 7+7 test baru.
+- Komponen: `src/components/toast.tsx` (ToastProvider/useToast/ToastViewport,
+  auto-dismiss 3 dtk), `src/components/confirm-dialog.tsx` (role=alertdialog,
+  fokus trap, Esc, fokus kembali ke pemicu, scroll lock), `src/components/skeleton.tsx`.
+- Skeleton `loading.tsx` untuk `/dashboard`, `/trips`, `/trips/[id]`.
+- Integrasi hapus: trip (`delete-trip-button.tsx`), agenda + pengeluaran
+  (`delete-buttons.tsx`) pakai ConfirmDialog. `deleteExpense` kini mengembalikan
+  state + cek `count === 0` agar RLS no-op tidak diklaim sukses.
+- Toast hasil aksi: form tambah/ubah agenda + pengeluaran, pelunasan,
+  nama tampilan (`display-name-form.tsx`).
+- Verifikasi: test 147 pass; tsc exit 0; lint exit 0 (0 warning); kontras exit 0;
+  build exit 0. Commit `10c13f3` (`0b4dc53..10c13f3` di origin/main).
+- Sisa: uji interaksi browser manual (buka modal, Tab/Esc, toast 3 dtk) — bagian CP4.
 
 ## CP4 — E2E manual + commit/push + deploy (T4+T5)
 - E2E 2 akun: buat trip → invite → join → itinerary → 3 expense → settlement
