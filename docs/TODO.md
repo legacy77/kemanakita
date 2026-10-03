@@ -5,7 +5,7 @@
 
 ## Prioritas — 2026-10-03 (PM)
 
-> State: M0 100%. **147 test hijau.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). Nav bawah mobile (`Dashboard | Trip | Gabung | Keluar`) + audit kontras token kanonik (skrip `check-contrast.mjs` sudah token baru, exit 0). `addExpense`/`markSettled` pakai id pra-generate; `deleteTrip` cek error + baris terhapus (flash `delete-error`); `deleteExpense` cek count exact. M1 migrasi init DIKLAIM jalan di `.superpowers/sdd/mvp/progress.md` — belum diverifikasi ulang di sesi ini; project/env mungkin ada, gate RLS tetap terbuka. Realtime: kode ter-push (commit `0b4dc53`), migrasi `20261003074910_realtime_trip_members.sql` SUDAH live (2026-10-03, terverifikasi `pg_publication_tables`) — uji 2 tab manual masih belum. M5 primitives kode selesai commit `10c13f3`, uji browser belum. Reset PIN admin manual `docs/admin-reset-pin.md` selesai. E2E 2 akun, HP asli, deploy, backup tetap terbuka. Guest-mode tunda (PRD §4.6).
+> State: M0 100%. **147 test hijau.** Auth produksi: email + PIN 6 digit (kanonik; magic link/OTP legacy deprecated). Nav bawah mobile (`Dashboard | Trip | Gabung | Keluar`) + audit kontras token kanonik (skrip `check-contrast.mjs` sudah token baru, exit 0). `addExpense`/`markSettled` pakai id pra-generate; `deleteTrip` cek error + baris terhapus (flash `delete-error`); `deleteExpense` cek count exact. M1 TERVERIFIKASI live 2026-10-03: 6 tabel + RLS aktif + 5 migrasi di ledger; simulasi peran hijau (owner 1 trip, anon 0). Realtime: kode ter-push (commit `0b4dc53`), migrasi `20261003074910_realtime_trip_members.sql` SUDAH live (2026-10-03, terverifikasi `pg_publication_tables`) — uji 2 tab manual masih belum. M5 primitives kode selesai commit `10c13f3`, uji browser belum. Reset PIN admin manual `docs/admin-reset-pin.md` selesai. Hardening SECURITY DEFINER live (`bfa363f`); advisor 0028/0029 tinggal `get_trip_by_invite` (disengaja). Deploy prod Ready (`kemanakita-flax.vercel.app`). Backup SQL DILEWATI (keputusan user 2026-10-03). Sisa: E2E 2 akun, uji 2 tab, browser/HP, toggle Leaked Password Protection. Guest-mode tunda (PRD §4.6).
 > Aturan gate: status "kode selesai" dibedakan dari "gate runtime/manual". Kode selesai = implementasi ada di tree/commit. Gate tertunda = butuh DB live / aksi manual / uji browser; gate tertunda tidak membatalkan status kode, dan kode selesai tidak menutup gate.
 
 ### Arti label
@@ -17,8 +17,8 @@
 
 | # | Item TODO | Status | Alasan |
 |---|-----------|--------|--------|
-| P0-1 | M1: project Supabase Free + env + 6 tabel + RLS + migrasi jalan | kode diklaim ada (progress.md) / verifikasi ulang belum — gate manual tertunda | Root blocker: gate M1 tetap merah sampai verifikasi ulang |
-| P0-2 | M1: test RLS member vs non-member + gate migrasi bersih | gate manual terbuka (tanpa bukti, jangan centang) | Gate M1; keamanan PRD §7.4, syarat lanjut |
+| P0-1 | M1: project Supabase Free + env + 6 tabel + RLS + migrasi jalan | selesai terverifikasi live 2026-10-03 (6 tabel, RLS aktif, 5 migrasi ledger) | Root blocker tertutup |
+| P0-2 | M1: test RLS member vs non-member + gate migrasi bersih | verifikasi peran live hijau (owner 1 trip, anon 0) / uji 2 akun nyata belum — gate manual parsial | Gate M1; keamanan PRD §7.4 |
 | P0-3 | M2: `/login` + `/trips` + invite `/join?code=` + gate 2 akun join | kode selesai / gate 2 akun manual terbuka | Happy path PRD §5.1 langkah 1–4; unlock M3/M4 |
 
 ### P1 — Nilai inti (setelah gembok buka)
@@ -36,13 +36,13 @@
 |---|-----------|--------|--------|
 | P2-1 | M5: primitives (skeleton, toast 3 dtk, modal konfirmasi) + bottom tabs + layout 640px | kode selesai (`10c13f3`) / uji browser manual terbuka; checklist §12 belum semua centang | Primitives sudah kode; jangan klaim desain selesai |
 | P2-2 | M5: checklist §12 + uji HP asli via preview Vercel | gate manual terbuka (butuh app hidup + data) | Gate polish; butuh app hidup + data |
-| P2-3 | M6: env Vercel + preview/prod + E2E §10.1 + backup dump + gate prod | terbuka (nunggu semua gate) | Paling akhir; E2E butuh alur penuh hidup |
+| P2-3 | M6: env Vercel + prod Ready + E2E §10.1 + gate prod (backup DILEWATI) | env+prod selesai live; E2E §10.1 manual terbuka | E2E butuh alur penuh hidup |
 
 ### 3 langkah berikutnya (paling bernilai)
 
-1. **Verifikasi ulang M1 di DB live** (env + migrasi init + RLS member vs non-member). Tanpa ini gate M1 tetap merah. (P0-1 → P0-2)
-2. **Uji 2 tab manual (realtime sudah live)**, lalu E2E 2 akun penuh (buat trip → invite → join → itinerary → 3 expense → saran benar → tandai lunas). (P1-4 → P0-3/E2E)
-3. **Uji browser manual M5** (buka modal, Tab/Esc, toast 3 dtk) + render 360px; jangan centang checklist §12 sebelum ini. (P2-1 → P2-2)
+1. **Uji 2 akun penuh** (buat trip → invite → join → itinerary → 3 expense → saran benar → tandai lunas) — menutup P0-2/P0-3 + gate E2E M4/M6 sekaligus.
+2. **Uji 2 tab manual realtime** (migrasi sudah live) + uji browser M5 (modal Tab/Esc, toast 3 dtk) + render 360px. (P1-4 → P2-1)
+3. **Uji HP asli via preview Vercel** (Android + iPhone) + toggle manual Leaked Password Protection di dashboard Supabase Auth. (P2-2)
 
 ## M0 — Keputusan & setup
 
@@ -54,11 +54,11 @@
 
 ## M1 — DB & Supabase (PRD §7)
 
-- [ ] Project Supabase Free + env (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_KEY` server-only)
-- [ ] 6 tabel (§7.3): `profiles`, `trips`, `trip_members`, `itinerary_items`, `expenses`, `expense_splits`
-- [ ] RLS: hanya member baca/tulis trip-nya; owner hapus trip / kick (§7.4)
-- [ ] Test RLS: member vs non-member
-- [ ] Gate: migrasi bersih + RLS test hijau
+- [x] Project Supabase Free + env (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_KEY` server-only) — terverifikasi live 2026-10-03
+- [x] 6 tabel (§7.3): `profiles`, `trips`, `trip_members`, `itinerary_items`, `expenses`, `expense_splits` — terverifikasi live
+- [x] RLS: hanya member baca/tulis trip-nya; owner hapus trip / kick (§7.4) — RLS aktif di 6 tabel (19 policy)
+- [ ] Test RLS: member vs non-member — simulasi peran live hijau (owner 1 trip, anon 0); uji 2 akun nyata belum
+- [ ] Gate: migrasi bersih + RLS test hijau — migrasi bersih (5 di ledger); test 2 akun belum
 - [x] Hardening SECURITY DEFINER: helper RLS (`is_trip_member`/`is_trip_owner`/`has_other_owner`) pindah ke schema `private` + EXECUTE fungsi trigger dicabut; `get_trip_by_invite` tetap publik disengaja — migrasi `20261003081856_harden_security_definer.sql` live 2026-10-03, RLS terverifikasi (owner lihat 1 trip, anon 0)
 
 ## M2 — Auth + trip + undangan (PRD §4.1–4.3, §5)
@@ -105,8 +105,8 @@
 
 ## M6 — Deploy (PRD §11 tahap 6)
 
-- [ ] Env lengkap di Vercel; service key server-only
-- [ ] Preview per PR, production per merge `main`
+- [x] Env lengkap di Vercel; service key server-only — terverifikasi production Ready
+- [x] Preview per PR, production per merge `main` — deploy production Ready (`kemanakita-flax.vercel.app`)
 - [ ] E2E manual §10.1: buat → undang 2 akun → itinerary → 3 expense → saran benar → tandai lunas
-- [ ] Backup manual SQL dump pertama (Free tanpa auto-backup)
+- [ ] Backup manual SQL dump pertama (Free tanpa auto-backup) — **DILEWATI** (keputusan user 2026-10-03; kredensial belum ter-set)
 - [ ] Gate: E2E hijau di production
