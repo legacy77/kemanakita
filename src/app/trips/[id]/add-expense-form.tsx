@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { addExpense, type ExpenseFormState } from "@/lib/trips/expense-actions";
 import { EXPENSE_CATEGORIES, formatRupiahInput, parseRupiahInput } from "@/lib/validate";
+import { useToast } from "@/components/toast";
 
 const initialState: ExpenseFormState = { status: "idle" };
 
@@ -22,6 +23,12 @@ export function AddExpenseForm({
   const [state, action, pending] = useActionState(addExpense, initialState);
   const [amountText, setAmountText] = useState("");
   const [selected, setSelected] = useState<Set<string>>(new Set(memberIds));
+  const { pushToast } = useToast();
+
+  useEffect(() => {
+    if (state.status === "ok") pushToast("success", "Pengeluaran tersimpan.");
+    if (state.status === "error") pushToast("error", state.message);
+  }, [state, pushToast]);
 
   return (
     <details className="rpg-panel">

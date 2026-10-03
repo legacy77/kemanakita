@@ -4,7 +4,7 @@
 // (pakai <details> sederhana), nilai terisi dari pengeluaran yang dipilih.
 // Bagi hasil dihitung ulang di server (`updateExpense` → `splitEvenly`).
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { updateExpense, type ExpenseFormState } from "@/lib/trips/expense-actions";
 import {
   EXPENSE_CATEGORIES,
@@ -12,6 +12,7 @@ import {
   parseRupiahInput,
   type ExpenseCategoryKey,
 } from "@/lib/validate";
+import { useToast } from "@/components/toast";
 
 const initialState: ExpenseFormState = { status: "idle" };
 
@@ -36,6 +37,11 @@ export function EditExpenseForm({
   };
 }) {
   const [state, action, pending] = useActionState(updateExpense, initialState);
+  const { pushToast } = useToast();
+  useEffect(() => {
+    if (state.status === "ok") pushToast("success", "Perubahan pengeluaran tersimpan.");
+    if (state.status === "error") pushToast("error", state.message);
+  }, [state, pushToast]);
   const [amountText, setAmountText] = useState(
     formatRupiahInput(defaultValues.amount),
   );

@@ -211,18 +211,46 @@ export async function updateExpense(
   return { status: "ok" };
 }
 
-export async function deleteExpense(formData: FormData): Promise<void> {
+export async function deleteExpense(
+  _prev: ExpenseFormState,
+  formData: FormData,
+): Promise<ExpenseFormState> {
   const tripId = String(formData.get("tripId") ?? "");
   const expenseId = String(formData.get("expenseId") ?? "");
-  if (tripId === "" || expenseId === "") return;
+  if (tripId === "" || expenseId === "") {
+    return { status: "error", message: "Pengeluaran nggak dikenali. Muat ulang halamannya ya." };
+  }
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return;
+  if (!user) {
+    return { status: "error", message: "Sesi kamu udah habis. Masuk lagi ya." };
+  }
 
   // RLS `expenses_delete_owner_or_payer`: owner trip atau yang membayar.
-  await supabase.from("expenses").delete().eq("id", expenseId).eq("trip_id", tripId);
+  // Bila bukan berwenang, delete menghapus 0 baris TANPA error —
+  // jadi sekadar "tidak error" bukan bukti sukses. Cek count exact,
+  // pola sama seperti deleteTrip di src/lib/trips/actions.ts.
+  const { error, count } = await supabase
+    .from("expenses")
+    .delete({ count: "exact" })
+    .eq("id", expenseId)
+    .eq("trip_id", tripId);
+
+  if (error) {
+    return { status: "error", message: "Gagal hapus pengeluaran. Coba lagi sebentar ya." };
+  }
+  // `count` null berarti header tidak tersedia (bukan bukti gagal); 0 berarti
+  // RLS menolak tanpa error — itu baru kegagalan nyata.
+  if (count === 0) {
+    return {
+      status: "error",
+      message: "Nggak bisa hapus: cuma owner trip atau yang membayar boleh menghapus.",
+    };
+  }
+
   revalidatePath(`/trips/${tripId}`);
+  return { status: "ok" };
 }

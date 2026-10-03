@@ -5,13 +5,20 @@
 // lewat server action `updateDisplayName` (validasi server + feedback).
 // Pola sama dengan form lain: `useActionState` + pesan error/sukses inline.
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { updateDisplayName, type UpdateNameState } from "@/lib/profile/actions";
+import { useToast } from "@/components/toast";
 
 const initialState: UpdateNameState = { status: "idle" };
 
 export function DisplayNameForm({ initialName }: { initialName: string }) {
   const [state, action, pending] = useActionState(updateDisplayName, initialState);
+  const { pushToast } = useToast();
+
+  useEffect(() => {
+    if (state.status === "ok") pushToast("success", "Nama tersimpan.");
+    if (state.status === "error") pushToast("error", state.message);
+  }, [state, pushToast]);
 
   return (
     <form action={action} className="flex flex-col items-center gap-2">

@@ -4,8 +4,9 @@
 // Satu tombol per saran transfer; from/to/amount diisi otomatis dari saran.
 // Memanggil server action `markSettled`; RLS di server yang memutuskan boleh/tidak.
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { markSettled, type SettlementFormState } from "@/lib/trips/settlement-actions";
+import { useToast } from "@/components/toast";
 
 const initialState: SettlementFormState = { status: "idle" };
 
@@ -23,6 +24,12 @@ export function SettlementButton({
   label: string;
 }) {
   const [state, action, pending] = useActionState(markSettled, initialState);
+  const { pushToast } = useToast();
+
+  useEffect(() => {
+    if (state.status === "ok") pushToast("success", "Pelunasan tercatat.");
+    if (state.status === "error") pushToast("error", state.message);
+  }, [state, pushToast]);
 
   return (
     <form action={action} className="flex flex-col items-end gap-1">

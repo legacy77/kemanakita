@@ -3,11 +3,12 @@
 // Form ubah item itinerary (client) — PRD §4.4. Pola sama dengan AddItineraryForm
 // (pakai <details> sederhana), nilai terisi dari item yang ada.
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import {
   updateItineraryItem,
   type ItineraryFormState,
 } from "@/lib/trips/itinerary-actions";
+import { useToast } from "@/components/toast";
 import { ItineraryCategoryField } from "./itinerary-category-field";
 
 const initialState: ItineraryFormState = { status: "idle" };
@@ -33,6 +34,12 @@ export function EditItineraryForm({
   };
 }) {
   const [state, action, pending] = useActionState(updateItineraryItem, initialState);
+  const { pushToast } = useToast();
+
+  useEffect(() => {
+    if (state.status === "ok") pushToast("success", "Perubahan agenda tersimpan.");
+    if (state.status === "error") pushToast("error", state.message);
+  }, [state, pushToast]);
 
   return (
     <details className="rounded-md border border-border">
