@@ -25,6 +25,7 @@ import { EditItineraryForm } from "./edit-itinerary-form";
 import { EditExpenseForm } from "./edit-expense-form";
 import { RemoveMemberButton } from "./remove-member-button";
 import { SettlementButton } from "./settlement-button";
+import { ShareInviteButton, WhatsAppInviteButton } from "./share-invite-button";
 import { TabNav } from "./tab-nav";
 import TripRealtime from "./trip-realtime";
 
@@ -200,12 +201,14 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
         <p className="text-[13px] leading-5 text-sky-100">
           {tripDayCount} hari · {memberCount} anggota · Total {formatRupiah(tripTotal)}
         </p>
-        <Link
-          href={inviteUrl}
-          className="rpg-btn mt-1 inline-flex h-11 w-fit items-center gap-1 rounded-md border-2 border-white/70 bg-white/15 px-3 text-[14px] font-bold text-white hover:bg-white/25"
-        >
-          🔗 Undang teman
-        </Link>
+        <div className="mt-1 flex flex-wrap gap-2">
+          <ShareInviteButton
+            inviteUrl={inviteUrl}
+            tripTitle={trip.title}
+            className="rpg-btn inline-flex h-11 w-fit items-center gap-1 rounded-md border-2 border-white/70 bg-white/15 px-3 text-[14px] font-bold text-white hover:bg-white/25"
+          />
+          <WhatsAppInviteButton inviteUrl={inviteUrl} tripTitle={trip.title} />
+        </div>
       </header>
 
       <TabNav tripId={tripId} active={tab} />
@@ -509,12 +512,14 @@ export default async function TripDetailPage({ params, searchParams }: PageProps
               );
             })}
           </ul>
-          <Link
-            href={inviteUrl}
-            className="rpg-btn flex h-12 items-center justify-center rounded-md bg-action px-4 text-[15px] font-bold text-white transition-colors hover:bg-action-hover"
-          >
-            🔗 Undang teman
-          </Link>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <ShareInviteButton
+              inviteUrl={inviteUrl}
+              tripTitle={trip.title}
+              className="rpg-btn flex h-12 flex-1 items-center justify-center rounded-md bg-action px-4 text-[15px] font-bold text-white transition-colors hover:bg-action-hover"
+            />
+            <WhatsAppInviteButton inviteUrl={inviteUrl} tripTitle={trip.title} />
+          </div>
         </section>
       )}
     </main>

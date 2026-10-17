@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-};
+const nextConfig: NextConfig = {};
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  sourcemaps: { disable: true },
+  silent: true,
+});
